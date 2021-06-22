@@ -10,6 +10,17 @@ $ npm install easygraphql-parser
 ## Specification
 This parser is based on easygraphql-parser From EasyGraphql. It extends its use to manage both field directives and type directives
 
+```gql
+actors: [Actor] @hasInverse(field: movies)
+```
+the parser can now handle more than the 3 native graphql directives ( @include, @skip and @deprecated). it now includes detailed info about custom directives
+and their arguments :
+- directive name : hasInverse
+- directive arguments : field 
+        
+       - value : movies
+
+
 ## Get Started
 
 this will be our schema in a folder named _graphql-examples_ and file named _movies.graphql_ :
