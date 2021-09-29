@@ -1,6 +1,6 @@
 {
-  "name": "easygraphql-parser",
-  "version": "0.0.15",
+  "name": "easygraphql-parser-gamechanger",
+  "version": "0.0.16",
   "description": "Parse GraphQL Schema",
   "main": "index.js",
   "scripts": {
@@ -21,14 +21,11 @@
     "parser",
     "schema"
   ],
-  "homepage": "https://github.com/EasyGraphQL/easygraphql-parser",
-  "author": {
-    "name": "EasyGraphQL",
-    "url": "https://github.com/EasyGraphQL"
-  },
+  "homepage": "https://github.com/GameChangerCloud/easygraphql-parser-gamechanger",
+  "author": "GameChanger (https://github.com/GameChangerCloud)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EasyGraphQL/easygraphql-parser"
+    "url": "git+https://github.com/GameChangerCloud/easygraphql-parser-gamechanger.git"
   },
   "bugs": {
     "url": "https://github.com/EasyGraphQL/easygraphql-parser/issues"
@@ -51,5 +48,9 @@
     "mocha": "^6.1.4",
     "nyc": "^14.0.0",
     "prettier": "^1.18.2"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }
