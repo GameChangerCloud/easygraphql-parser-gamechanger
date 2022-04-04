@@ -1,38 +1,30 @@
 interface User {
+    id: ID!
   email: String!
   username: String!
 }
 
 type Student implements User {
+    id: ID!
   email: String!
   username: String!
   fullName: String!
 }
 
 type Teacher implements User {
+    id: ID!
   email: String!
   username: String!
   age: Int!
 }
 
 input StudentInput {
+    id: ID!
   email: String!
   username: String!
   fullName: String!
   password: String!
 }
 
-type Query {
-  getStudentByUsername(username: String!, name: String!): Student
-  getStudents: [Student]!
-}
 
-type Mutation {
-  createStudent(input: StudentInput!): Student
-  createStudents(input: [StudentInput]!): [Student]!
-}
 
-schema {
-  query: Query
-  mutation: Mutation
-}

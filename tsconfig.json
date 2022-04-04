@@ -1,0 +1,37 @@
+{
+  "compilerOptions": { /* Docs: https://www.typescriptlang.org/tsconfig */
+    "target": "es2015",
+    "module": "commonjs",
+    "rootDir": "./lib",
+    "outDir": "./dist",
+    "strict": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "strictNullChecks": true,
+    "checkJs": false,
+    "allowJs": true,
+    "sourceMap": false,
+    "declaration": true,
+    "declarationMap": false,
+    "moduleResolution": "node",
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es6"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": true
+  },
+  "include": [
+    "lib/**/*.js", "lib/**/*.jsx", "lib/**/*.ts", "lib/**/*.tsx"
+  ],
+  "exclude": [
+    "test",
+    "node_modules",
+    "<node_internals>/**",
+  ],
+
+}
