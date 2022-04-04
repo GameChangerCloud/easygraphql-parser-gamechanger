@@ -1,13 +1,12 @@
 {
   "compilerOptions": { /* Docs: https://www.typescriptlang.org/tsconfig */
-    "target": "ES2020",
+    "target": "es2015",
     "module": "commonjs",
-    "outDir": "generators",
-    "rootDir": "./",
+    "rootDir": "./lib",
+    "outDir": "./dist",
     "strict": false,
     "noImplicitAny": false,
     "noImplicitReturns": false,
-
     "strictNullChecks": true,
     "checkJs": false,
     "allowJs": true,
@@ -24,10 +23,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowUnreachableCode": true,
+    "allowUnreachableCode": true
   },
   "include": [
-    "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"
+    "lib/**/*.js", "lib/**/*.jsx", "lib/**/*.ts", "lib/**/*.tsx"
   ],
   "exclude": [
     "test",
