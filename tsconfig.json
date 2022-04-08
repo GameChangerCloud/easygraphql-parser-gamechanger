@@ -15,7 +15,8 @@
     "declarationMap": false,
     "moduleResolution": "node",
     "types": [
-      "node"
+      "node",
+      "mocha"
     ],
     "lib": [
       "es6"

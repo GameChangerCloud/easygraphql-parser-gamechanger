@@ -1,0 +1,7 @@
+scalar RGB
+
+type Mutation {
+    getNames: [String]
+    getColor: RGB
+    person: Person
+}

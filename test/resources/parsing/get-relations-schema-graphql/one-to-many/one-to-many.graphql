@@ -1,0 +1,9 @@
+type Movie {
+    id: ID!
+    oscar: Oscar!
+}
+
+type Oscar {
+    is: ID!
+    owners: [Movie]
+}

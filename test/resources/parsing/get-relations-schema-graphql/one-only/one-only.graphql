@@ -1,0 +1,8 @@
+type Movie {
+    id: ID!
+    studio: Studio
+}
+
+type Studio {
+    id: ID!
+}

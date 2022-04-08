@@ -1,0 +1,320 @@
+[
+  {
+    "name": "id",
+    "type": "ID",
+    "noNullArrayValues": false,
+    "noNull": true,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "title",
+    "type": "String",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "poster",
+    "type": "String",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "actors",
+    "type": "Actor",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": true,
+    "directives": [
+      {
+        "name": "hasInverse",
+        "args": [
+          {
+            "name": "field",
+            "value": "movies"
+          }
+        ]
+      }
+    ],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "studio",
+    "type": "Studio",
+    "noNullArrayValues": false,
+    "noNull": true,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "oscars",
+    "type": "Oscar",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": true,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "sequel",
+    "type": "Movie",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "synopsis",
+    "type": "Synopsis",
+    "noNullArrayValues": false,
+    "noNull": true,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "isEnglish",
+    "type": "Boolean",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "points",
+    "type": "Int",
+    "noNullArrayValues": false,
+    "noNull": true,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  },
+  {
+    "name": "launchDate",
+    "type": "Date",
+    "noNullArrayValues": false,
+    "noNull": false,
+    "isArray": false,
+    "directives": [],
+    "arguments": [],
+    "isDeprecated": false,
+    "foreign_key": null,
+    "relation": false,
+    "delegated_field": {
+      "state": false,
+      "side": null,
+      "associatedWith": {
+        "type": null,
+        "fieldName": null
+      }
+    },
+    "in_model": true,
+    "joinTable": {
+      "state": false,
+      "name": null,
+      "contains": []
+    },
+    "oneToOneInfo": null,
+    "sqlType": "int"
+  }
+]
