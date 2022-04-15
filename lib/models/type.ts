@@ -1,4 +1,4 @@
-import {Field} from './field'
+import {Field, IField} from './field'
 
 import {getSQLTableName} from "../utils/get-sql-table-name";
 
@@ -9,7 +9,7 @@ export interface IType {
     description: string;
     directives: any[];
     relationList: any[];
-    fields: Field[];
+    fields: IField[];
     implementedTypes: any;
 }
 
@@ -20,7 +20,7 @@ export class Type {
     description: string;
     directives: any[];
     relationList: any[];
-    fields: Field[];
+    fields: IField[];
     implementedTypes: any;
 
     constructor(type: string, typeName: string, sqlTypeName: string, description: string, directives: any[], implementedTypes: any,) {
@@ -46,7 +46,7 @@ export class Type {
                 schemaJSON[typeName].directives ? schemaJSON[typeName].directives : [],
                 schemaJSON[typeName].implementedTypes ? schemaJSON[typeName].implementedTypes : []
             )
-            for (const field of schemaJSON[typeName].fields as Field[]) {
+            for (const field of schemaJSON[typeName].fields as IField[]) {
                 let fieldToAdd = new Field(
                     field.name,
                     field.type,

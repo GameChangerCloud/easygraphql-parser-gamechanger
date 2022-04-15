@@ -27,7 +27,11 @@
     "allowUnreachableCode": true
   },
   "include": [
-    "lib/**/*.js", "lib/**/*.jsx", "lib/**/*.ts", "lib/**/*.tsx"
+    "lib/**/*.js",
+    "lib/**/*.jsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "test"
   ],
   "exclude": [
     "test",
