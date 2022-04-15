@@ -1,0 +1,11 @@
+type Person {
+    hasJob: Boolean!
+}
+
+type Mutation {
+    hasJob(hasJob: Boolean!): Boolean!
+}
+
+type Query {
+    getHasJob: Boolean!
+}

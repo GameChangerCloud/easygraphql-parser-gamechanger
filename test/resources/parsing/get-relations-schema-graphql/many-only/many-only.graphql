@@ -1,0 +1,8 @@
+type Movie {
+    id: ID!
+    oscars: [Oscar]
+}
+
+type Oscar {
+    id: ID!
+}

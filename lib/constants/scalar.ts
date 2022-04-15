@@ -1,4 +1,4 @@
-export declare enum scalars {
+export enum Scalars {
     ObjectID = 'ObjectID',
     Date = 'Date',
     Time = 'Time',
@@ -37,6 +37,6 @@ export declare enum scalars {
     JSONObject = 'JSONObject',
     Byte = 'Byte',
     Point = 'Point',
-    Linestring = 'LineString',
+    LineString = 'LineString',
     Polygon = 'Polygon',
 }

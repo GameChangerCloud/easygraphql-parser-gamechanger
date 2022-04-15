@@ -1,0 +1,522 @@
+[
+  {
+    "name": "Movie",
+    "sqlname": "movie",
+    "columns": [
+      {
+        "field": "Pk_movie_id",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "isArray": false,
+        "gqlType": "ID",
+        "noNull": true,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "name",
+        "fieldType": "text",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "String",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "viewers",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Int",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "french",
+        "fieldType": "boolean",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Boolean",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "value",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Float",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "trailers",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": true,
+        "gqlType": "URL",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "duration",
+        "fieldType": "time",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Time",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "launchDate",
+        "fieldType": "date",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Date",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "Fk_studio_studio_id",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": "FOREIGN KEY (\"Fk_studio_studio_id\") REFERENCES \"studio\" (\"Pk_studio_id\")",
+        "isArray": false,
+        "gqlType": "int",
+        "noNullArrayValues": false
+      },
+      {
+        "field": "ipv4",
+        "fieldType": "inet",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "IPv4",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "ipv6",
+        "fieldType": "inet",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "IPv6",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "mac",
+        "fieldType": "macaddr",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "MAC",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "usCurrency",
+        "fieldType": "money",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "USCurrency",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "currency",
+        "fieldType": "money",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Currency",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "json",
+        "fieldType": "json",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "JSON",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "jsonObject",
+        "fieldType": "json",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "JSONObject",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "byte",
+        "fieldType": "bytea",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Byte",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "lineString",
+        "fieldType": "geometry",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "LineString",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "point",
+        "fieldType": "geometry",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Point",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "polygon",
+        "fieldType": "geometry",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Polygon",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "utcOffset",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "UtcOffset",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "emailAddress",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "EmailAddress",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "phoneNumber",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "PhoneNumber",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "postalCode",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "PostalCode",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "hexColorCode",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "HexColorCode",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "hsl",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "HSL",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "hsla",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "HSLA",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "nonPositiveInt",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NonPositiveInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "positiveInt",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "PositiveInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "nonNegativeInt",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NonNegativeInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "negativeInt",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NegativeInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "unsignedInt",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "UnsignedInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "rgb",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "RGB",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "isbn",
+        "fieldType": "text",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "ISBN",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "rgba",
+        "fieldType": "text",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "RGBA",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "Fk_movies_actor_id",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": null,
+        "isArray": true,
+        "gqlType": "Int",
+        "noNull": false,
+        "noNullArrayValues": false
+      }
+    ],
+    "isJoinTable": false
+  },
+  {
+    "name": "Actor",
+    "sqlname": "actor",
+    "columns": [
+      {
+        "field": "Pk_actor_id",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "isArray": false,
+        "gqlType": "ID",
+        "noNull": true,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "name",
+        "fieldType": "text",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "String",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "paymentDate",
+        "fieldType": "timestamp",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "DateTime",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "nonPositiveFloat",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NonPositiveFloat",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "positiveFloat",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "PositiveFloat",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "nonNegativeFloat",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NonNegativeFloat",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "negativeFloat",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "NegativeFloat",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "unsignedFloat",
+        "fieldType": "float8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "UnsignedFloat",
+        "noNull": false,
+        "noNullArrayValues": false
+      }
+    ],
+    "isJoinTable": false
+  },
+  {
+    "name": "Studio",
+    "sqlname": "studio",
+    "columns": [
+      {
+        "field": "Pk_studio_id",
+        "fieldType": "int",
+        "unique": false,
+        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "isArray": false,
+        "gqlType": "ID",
+        "noNull": true,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "name",
+        "fieldType": "text",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "String",
+        "noNull": true,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "rent",
+        "fieldType": "int8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "BigInt",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "long",
+        "fieldType": "int8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Long",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "port",
+        "fieldType": "int8",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "Port",
+        "noNull": false,
+        "noNullArrayValues": false
+      },
+      {
+        "field": "guid",
+        "fieldType": "uuid",
+        "unique": false,
+        "constraint": null,
+        "isArray": false,
+        "gqlType": "GUID",
+        "noNull": false,
+        "noNullArrayValues": false
+      }
+    ],
+    "isJoinTable": false
+  }
+]

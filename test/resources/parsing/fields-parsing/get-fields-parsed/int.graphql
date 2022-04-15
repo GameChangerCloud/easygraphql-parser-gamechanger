@@ -1,0 +1,11 @@
+type Person {
+    age: Int!
+}
+
+type Mutation {
+    age(age: Int!): Int!
+}
+
+type Query {
+    getAge: Int!
+}

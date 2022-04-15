@@ -13,50 +13,50 @@ export {typesGenerator}
 /**
  * Constants export
  */
-export {scalars} from "./constants/scalar"
+export {Scalars} from "./constants/scalar"
 export {directives} from "./constants/directives"
 export {Relationships} from './constants/relationships'
 
 /**
  * Models export
  */
-export {Type} from "./models/Type"
+export {Type} from "./models/type"
 
 /**
  * Directive management export
  */
-export {deprecatedDirective} from "./directive-management/deprecatedDirective"
+export {deprecatedDirective} from "./directive-management/deprecated-directive"
 
 /**
  * Scalar-management export
  */
-export {isBasicType, isScalar} from "./scalar-managment/manageScalars"
+export {isBasicType, isScalar} from "./scalar-managment/manage-scalars"
 
 /**
  *  Utils export
  */
-export {getSQLTableName} from "./utils/getSQLTableName"
-export {isSchemaValid} from "./utils/isSchemaValid"
-export {hasFieldType} from "./utils/hasFieldType"
-export {formatName} from "./utils/formatName"
-export {findTable} from "./utils/findTable"
-export {findField} from "./utils/findField"
+export {getSQLTableName} from "./utils/get-sql-table-name"
+export {isSchemaValid} from "./utils/is-schema-valid"
+export {hasFieldType} from "./utils/has-field-type"
+export {formatName} from "./utils/format-name"
+export {findTable} from "./utils/find-table"
+export {findField} from "./utils/find-field"
 /**
  * Matching export
  */
-export {matchString} from "./matching/matchString"
+export {matchString} from "./matching/match-string"
 
 /**
  * Parsing export
  */
-export {getFieldsParsed, getFieldsInput, getFieldsParsedHandler, getFieldsCreate, getFieldsName} from "./parsing/fieldsParsing"
-export {getAllTypes, getAllTypesName, getTypesExceptQueries} from "./parsing/getTypes"
-export {getFields, getFieldsDirectiveNames} from "./parsing/getFields"
-export {getDirectivesNames} from './parsing/getDirectives'
-export {getRequire} from "./parsing/getRequire"
-export {getGraphqlType} from './parsing/getGraphQLType'
-export {getResolveType} from './parsing/getResolveType'
-export {getEnumValues} from './parsing/getEnumValues'
-export {getAllTables, getInitEachModelsJS, getInitEachFieldsModelsJS} from './parsing/databaseParsing'
-export {getRelations, getJoinTables, getQuerySelfJoinOne, getQuerySelfJoinMany} from './parsing/relationsParsing'
-export {compareSchema} from './parsing/schemaUpdate'
+export {getFieldsParsed, getFieldsInput, getFieldsParsedHandler, getFieldsCreate, getFieldsName} from "./parsing/fields-parsing"
+export {getAllTypesName, getTypesExceptQueries} from "./parsing/get-types"
+export {getFields, getFieldsDirectiveNames} from "./parsing/get-fields"
+export {getDirectivesNames} from './parsing/get-directives'
+export {getRequire} from "./parsing/get-require"
+export {getGraphqlType} from './parsing/get-graphql-type'
+export {getResolveType} from './parsing/get-resolve-type'
+export {getEnumValues} from './parsing/get-enum-values'
+export {getAllTables, getInitEachModelsJS, getInitEachFieldsModelsJS} from './parsing/database-parsing'
+export {getRelations, getJoinTables, getQuerySelfJoinOne, getQuerySelfJoinMany} from './parsing/relations-parsing'
+export {compareSchema} from './parsing/schema_update'

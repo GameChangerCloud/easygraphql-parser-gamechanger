@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Movie_actor_actors",
+    "sqlname": "movie_actor_actors",
+    "isJoinTable": true,
+    "columns": [
+      {
+        "field": "movie_id",
+        "fieldType": "INTEGER",
+        "constraint": "FOREIGN KEY (\"movie_id\") REFERENCES \"movie\"(\"Pk_movie_id\")"
+      },
+      {
+        "field": "actors_id",
+        "fieldType": "INTEGER",
+        "constraint": "FOREIGN KEY (\"actors_id\") REFERENCES \"actor\"(\"Pk_actor_id\")"
+      }
+    ]
+  },
+  {
+    "name": "Actor_movie_movies",
+    "sqlname": "actor_movie_movies",
+    "isJoinTable": true,
+    "columns": [
+      {
+        "field": "actor_id",
+        "fieldType": "INTEGER",
+        "constraint": "FOREIGN KEY (\"actor_id\") REFERENCES \"actor\"(\"Pk_actor_id\")"
+      },
+      {
+        "field": "movies_id",
+        "fieldType": "INTEGER",
+        "constraint": "FOREIGN KEY (\"movies_id\") REFERENCES \"movie\"(\"Pk_movie_id\")"
+      }
+    ]
+  }
+]

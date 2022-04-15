@@ -1,0 +1,11 @@
+type Person {
+    id: ID!
+}
+
+type Mutation {
+    id(id: ID!): ID!
+}
+
+type Query {
+    getId: ID!
+}
