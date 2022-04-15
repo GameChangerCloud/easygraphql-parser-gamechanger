@@ -1,15 +1,21 @@
 import {IType} from "../models/type";
+import {isBasicType} from "../scalar-managment/manage-scalars";
 
 export const isSchemaValid = (types: IType[]) => {
     let typesNames = types.map(type => type.typeName)
-
-    if (!typesHaveId(typesNames, types))
-        return {response: false, reason: "Missing required id field of type ID in one or multiple Entity"}
-
-    if (!fieldTypeExists(typesNames, types))
-        return {response: false, reason: "One Entity has one or multiple fields of undefined types. Please use default scalar, declare your own scalar or declare missing entity type"}
-
-    return {response: true}
+    let response = {response: true, reason: ""}
+    if (!typesHaveId(typesNames, types)) {
+        response = {
+            response: false,
+            reason: "Missing required id field of type ID in one or multiple Entity"}
+    }
+    if (!fieldTypeExists(typesNames, types)) {
+        response = {
+            response: false,
+            reason: "One Entity has one or multiple fields of undefined types. Please use default scalar, declare your own scalar or declare missing entity type"
+        }
+    }
+    return response
 }
 
 const typesHaveId = (typesNames, types) => {
@@ -24,16 +30,12 @@ const typesHaveId = (typesNames, types) => {
 }
 
 // Check if the types of field are correct (default scalar, personalized scalar of other existing entities)
-const fieldTypeExists = (typesNames, types) => {
-    for (let i = 0; i < types.length; i++) {
-        let fields = types[i].fields
-        for (let j = 0; j < fields.length; j++) {
-            if (fields[j].type !== "ID" && fields[j].type !== "String" && fields[j].type !== "Int" && fields[j].type !== "Boolean" && fields[j].type !== "Float") { // Default scalar
-                if (!typesNames.includes(fields[j].type)) { // User scalars or Entities
-                    return false
-                }
+const fieldTypeExists = (typesNames: string[], types: IType[]) => {
+    for (let type of types) {
+        for (let field of type.fields) {
+            if(!isBasicType(field.type) && !typesNames.includes(field.type)){
+                return false
             }
-
         }
     }
     return true

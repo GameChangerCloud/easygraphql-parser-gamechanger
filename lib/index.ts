@@ -7,8 +7,7 @@ export {schemaParser}
 /**
  * type enrichment function export
  */
-import typesGenerator from "./type-generator/typeGenerator";
-export {typesGenerator}
+export {typesGenerator} from "./type-generator/types-generator";
 
 /**
  * Constants export
