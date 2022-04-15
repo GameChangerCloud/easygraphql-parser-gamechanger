@@ -1,7 +1,6 @@
 import {Field} from './field'
 
 import {getSQLTableName} from "../utils/get-sql-table-name";
-import * as Util from "util";
 
 export interface IType {
     type: string;

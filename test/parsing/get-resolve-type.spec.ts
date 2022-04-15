@@ -1,7 +1,4 @@
-import {getAllTables, getRelations, getResolveType, schemaParser, Type} from "../../lib";
-import fs from "fs";
-import path from "path";
-import util from "util";
+import {getResolveType} from "../../lib";
 import {expect} from "chai";
 
 

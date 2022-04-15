@@ -1,8 +1,5 @@
 import {getEnumValues} from "../../lib";
-import util from 'util'
 import {expect} from "chai";
-import fs from "fs";
-import path from "path";
 
 
 describe('directives methods', function () {
