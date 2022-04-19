@@ -402,10 +402,10 @@ export const getRelations = (types, env) => {
 /**
  * Build the list of join tables to add to the schema on top of standard object
  *
- * @param {*} List of types as return by easygraphql-parser and enrich by determining relationship kinds on each field
  * @returns Tables description
+ * @param types
  */
-export const getJoinTables = (types) => {
+export const getJoinTables = (types: IType[]) => {
     let result: any = []
 
     types.forEach(type => {

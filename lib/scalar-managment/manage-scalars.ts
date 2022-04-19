@@ -1,4 +1,3 @@
-import {Type} from "../models/type";
 import {Scalars} from '../constants/scalar';
 import {getSQLTableName} from "../utils/get-sql-table-name";
 
