@@ -1,6 +1,6 @@
-import schemaParser from "./schema-parser/schemaParser";
 import {Type} from "./models/type";
 import {getRelations} from "./parsing/relations-parsing";
+import {schemaParser} from "./schema-parser/schemaParser";
 
 const fs = require("fs");
 const path = require("path");

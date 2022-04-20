@@ -1,6 +1,6 @@
 import { Kind } from 'graphql'
 import { expect } from 'chai'
-import schemaParser from '../../lib/schema-parser/schemaParser'
+import {schemaParser} from "../../lib";
 const schemaCode = require('../resources/schema-parser/schema-json/schema.json')
 
 describe('Parse GraphQL schema into an object', () => {
