@@ -1,16 +1,7 @@
-'use strict'
+import {parse, Kind, printSchema, buildClientSchema, GraphQLSchema, buildASTSchema} from "graphql";
+import {mergeTypeDefs} from "@graphql-tools/merge";
 
-const {
-    parse,
-    Kind,
-    printSchema,
-    buildClientSchema,
-    GraphQLSchema,
-    buildASTSchema,
-} = require('graphql')
-const {mergeTypeDefs} = require('@graphql-tools/merge')
-
-function getOperationTypes(schema, nodeMap) {
+const getOperationTypes = (schema, nodeMap) => {
     const opTypes = {}
     const s = parseSchema(nodeMap)
     schema.operationTypes.forEach((operationType) => {
@@ -40,12 +31,11 @@ function getOperationTypes(schema, nodeMap) {
     return Object.assign({schemaDefinition: opTypes}, s)
 }
 
-function schemaBuilder(doc) {
+const schemaBuilder = (doc) => {
     let schemaDef = void 0
     const nodeMap = Object.create(null)
-    const directiveDefs = []
-    for (let i = 0; i < doc.definitions.length; i++) {
-        const d = doc.definitions[i]
+    const directiveDefs: any[] = []
+    for (let d of doc.definitions){
         const typeName = d && d.name ? d.name.value : undefined
         switch (d.kind) {
             case Kind.SCHEMA_DEFINITION:
@@ -85,20 +75,19 @@ function schemaBuilder(doc) {
         }
     }
 
-    const operationTypes = schemaDef
+    return schemaDef
         ? getOperationTypes(schemaDef, nodeMap)
         : parseSchema(nodeMap)
-
-    return operationTypes
 }
 
 /**
  * Find the type of a field on the Schema
  * @param node - The graph schema
  * @param typeInfo - The object with the recursive values
+ * @param nestedCall
  * @returns {{type: String, noNull: Boolean, isArray: Boolean}}
  */
-function findType(node, typeInfo, nestedCall) {
+function findType(node, typeInfo?, nestedCall?) {
     typeInfo = typeInfo || {
         noNull: false,
         isArray: false,
@@ -169,7 +158,7 @@ function validateIfDeprecated(directives) {
  * @returns {Array}
  */
 function parseDirectiveArgs(args) {
-    const formattedArgs = []
+    const formattedArgs:any [] = []
 
     args.forEach((arg) => {
         const data = Object.assign({
@@ -187,7 +176,7 @@ function parseDirectiveArgs(args) {
  * @returns {Array}
  */
 function parseDirectives(directives) {
-    const formattedDirectives = []
+    const formattedDirectives: any[] = []
 
     directives.forEach((directive) => {
         const data = Object.assign({
@@ -207,7 +196,7 @@ function parseSchema(types) {
         const parsedType = {
             type: type.kind,
             description: type.description,
-            fields: [],
+            fields: [] as any[],
             values: [],
             types: [],
             implementedTypes: [],
@@ -215,7 +204,7 @@ function parseSchema(types) {
         }
 
         if (type.fields) {
-            const fields = []
+            const fields: any[] = []
 
             type.fields.forEach((field) => {
                 // Set the name of the field used on the Schema
@@ -269,8 +258,9 @@ function parseSchema(types) {
     return parsedTypes
 }
 
-function schemaParser(source) {
+export function schemaParser(source) {
     if (Array.isArray(source)) {
+        // @ts-ignore
         source = mergeTypeDefs(source, {all: true})
     }
 
@@ -289,5 +279,3 @@ function schemaParser(source) {
         parse(source, {allowLegacySDLImplementsInterfaces: true})
     )
 }
-
-module.exports = schemaParser

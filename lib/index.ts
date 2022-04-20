@@ -1,8 +1,8 @@
 /**
  * easygraphql-parser schemaParser function export
  */
-import schemaParser from "./schema-parser/schemaParser";
-export {schemaParser}
+export {schemaParser} from "./schema-parser/schemaParser";
+
 
 /**
  * type enrichment function export

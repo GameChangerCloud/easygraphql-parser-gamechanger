@@ -5,7 +5,6 @@ import {hasFieldType, isSchemaValid, Type} from "../index";
 import util from "util";
 
 export const typesGenerator = (schemaJSON) => {
-    console.log('Type Generation started :', util.inspect(schemaJSON, false, null, true))
     let types = Type.initTypes(schemaJSON)
     let isValidSchema = isSchemaValid(types)
     if (!isValidSchema.response) {
