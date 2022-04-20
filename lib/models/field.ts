@@ -64,7 +64,6 @@ export class Field {
     /**
      * Set up types fields to handle tracking of foreign key that might have been added by other types
      * Init Object type parameters . obj = {key1 : value1, key2 : value2 ....}
-     * @param {*} types list of types
      * @returns nothing
      */
     initObjectParameters(){

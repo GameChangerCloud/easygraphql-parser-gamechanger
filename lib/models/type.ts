@@ -31,7 +31,7 @@ export class Type {
         this.directives = directives
         this.fields = []
         this.implementedTypes = implementedTypes
-        // stores all the relations which were found for a give type
+        // stores all the relations which were found for a given type
         this.relationList = []
     }
 
