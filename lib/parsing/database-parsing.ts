@@ -1,6 +1,6 @@
 import {IType} from "../models/type";
 import {Scalars} from "../constants/scalar";
-import {isBasicType, isScalar} from "../scalar-managment/manage-scalars";
+import {isBasicScalar, isScalar} from "../scalar-managment/manage-scalars";
 /** Fonctions principales */
 /** DATABASE (tables, init, fill, drop) */
 
@@ -56,7 +56,7 @@ const getScalarFieldInfo = (currentType: IType, typesNameArray: string[]) => {
     currentType.fields.forEach(field => {
         let fieldType = field.type
         let fieldIsArray = field.isArray
-        if (!typesNameArray.includes(fieldType) && field["in_model"] && isBasicType(fieldType)) {
+        if (!typesNameArray.includes(fieldType) && field["in_model"] && isBasicScalar(fieldType)) {
             if (fieldType === "ID") {
                 tableTemp.push({
                     field: "Pk_" + currentType.sqlTypeName + "_id",

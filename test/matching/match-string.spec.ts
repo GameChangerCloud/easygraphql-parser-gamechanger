@@ -4,7 +4,7 @@ import {expect} from "chai";
 describe('MatchString method', () => {
     it('Given a zip, should return chance.zip()', () => {
         //GIVEN
-        let strings = ["Zip", "AreaCode"]
+        const strings = ["Zip", "AreaCode"]
 
         //WHEN
         strings.forEach(str => {

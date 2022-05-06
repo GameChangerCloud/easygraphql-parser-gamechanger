@@ -2,12 +2,16 @@ import {Scalars} from '../constants/scalar';
 import {getSQLTableName} from "../utils/get-sql-table-name";
 
 export const isScalar = (typeName: string) => {
-    return typeName in Scalars || isBasicType(typeName)
+    return isPersonalizedScalar(typeName) || isBasicScalar(typeName)
 }
 
-export const isBasicType = (typeName: string) => {
+export const isBasicScalar = (typeName: string) => {
     let defaultScalars = ['String', 'ID', 'Int', 'Boolean', 'Float']
     return defaultScalars.includes(typeName)
+}
+
+export const isPersonalizedScalar = (typeName: string) => {
+    return typeName in Scalars
 }
 
 export const getFieldCreate = (type: string, name: string) => {

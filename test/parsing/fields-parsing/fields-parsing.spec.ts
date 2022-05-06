@@ -46,7 +46,7 @@ describe('get fields parsed methods', function () {
             ));
             const currentTypeName = "Movie"
             //WHEN
-            const resultString = getFieldsParsedHandler(currentTypeName, fields, false, "")
+            const resultString = getFieldsParsedHandler(currentTypeName, fields)
             const expectedString = '\t\t\tid: data.Pk_Movie_id,\n' +
                 '\t\t\ttitle: data.title,\n' +
                 '\t\t\tposter: data.poster,\n' +
@@ -72,7 +72,7 @@ describe('get fields parsed methods', function () {
             ));
             const currentTypeName = "Movie"
             //WHEN
-            const resultString = getFieldsCreate(currentTypeName, fields, Relationships, "")
+            const resultString = getFieldsCreate(currentTypeName, fields, Relationships)
             const expectedString = 'utils.escapeQuote(args.title) + "," + utils.escapeQuote(args.poster) + "," + args.isEnglish + "," + args.points + "," + utils.escapeQuote(args.launchDate)'
             // THEN
             expect(resultString).to.exist
@@ -88,7 +88,7 @@ describe('get fields parsed methods', function () {
             ));
             const currentTypeName = "Movie"
             //WHEN
-            const resultString = getFieldsName("", fields, currentTypeName, "", Relationships)
+            const resultString = getFieldsName(fields, currentTypeName, "", Relationships)
             const expectedString = '\\"title\\",\\"poster\\",\\"isEnglish\\",\\"points\\",\\"launchDate\\"'
             // THEN
             expect(resultString).to.exist

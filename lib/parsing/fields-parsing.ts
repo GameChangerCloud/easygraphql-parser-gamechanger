@@ -1,26 +1,22 @@
 /** Fonctions principales */
 
-import { Relationships } from "../constants/relationships";
-import { getFieldCreate, getFieldName } from "../scalar-managment/manage-scalars";
+import {Relationships} from "../constants/relationships";
+import {getFieldCreate, getFieldName, isPersonalizedScalar, isScalar} from "../scalar-managment/manage-scalars";
 import pluralize from 'pluralize'
 import {IType} from "../models/type";
 
 /**
  * From the fields object, transform the syntax to get the right one to print on final type.js file. Return a string
- * @param {*} currentTypeName
- * @param {*} fields
  * @param {*} type
- * @param {*} relations
  * @param {*} manyToManyTables
  * @param {*} typesName
- * @param {*} defaultScalarsType
  * @returns
  */
-export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName: string[], defaultScalarsType: string[]) => {
+export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName: string[]) => {
     let result = "";
     for (let index = 0; index < type.fields.length; index++) {
         let field = type.fields[index];
-        let hasArguments = field.arguments[0] ? true : false;
+        let hasArguments = !!field.arguments[0];
         if (index > 0)
             result += "\t\t";
         switch (field.type) {
@@ -31,8 +27,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                     result += buildArgs(field.arguments, hasArguments);
                     result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                     result += "\n\t\t},\n";
-                }
-                else {
+                } else {
                     result += buildTypeField(field, "GraphQLID", false);
                 }
                 break;
@@ -43,8 +38,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                     result += buildArgs(field.arguments, hasArguments);
                     result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                     result += "\n\t\t},\n";
-                }
-                else {
+                } else {
                     result += buildTypeField(field, "GraphQLString", false);
                 }
                 break;
@@ -55,8 +49,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                     result += buildArgs(field.arguments, hasArguments);
                     result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                     result += "\n\t\t},\n";
-                }
-                else {
+                } else {
                     result += buildTypeField(field, "GraphQLInt", false);
                 }
                 break;
@@ -67,8 +60,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                     result += buildArgs(field.arguments, hasArguments);
                     result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                     result += "\n\t\t},\n";
-                }
-                else {
+                } else {
                     result += buildTypeField(field, "GraphQLBoolean", false);
                 }
                 break;
@@ -76,7 +68,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
             default:
                 if (type.typeName === "Query") { // If query, we do not accept reserved field query (e.g <entity> or <entities>)
                     if (isValidFieldQuery(field.name, typesName)) {
-                        if (field.type === "String" || field.type === "Int" || field.type === "Boolean" || field.type === "ID" || defaultScalarsType.includes(field.type))
+                        if (isScalar(field.type))
                             result += buildTypeField(field, field.type, true);
                         else
                             result += buildTypeField(field, field.type + "Type", true);
@@ -85,10 +77,9 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                         result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                         result += "\n\t\t},\n";
                     }
-                }
-                else if (type.typeName === "Mutation") {
+                } else if (type.typeName === "Mutation") {
                     if (isValidFieldMutation(field.name, typesName)) {
-                        if (field.type === "String" || field.type === "Int" || field.type === "Boolean" || field.type === "ID" || defaultScalarsType.includes(field.type))
+                        if (isScalar(field.type))
                             result += buildTypeField(field, field.type, true);
                         else
                             result += buildTypeField(field, field.type + "Type", true);
@@ -97,19 +88,16 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                         result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\t // To define \n\t\t\t}";
                         result += "\n\t\t},\n";
                     }
-                }
-                else {
-                    if (defaultScalarsType.includes(field.type)) {
+                } else {
+                    if (isPersonalizedScalar(field.type)) {
                         result += buildTypeField(field, field.type, true);
                         result += "\n";
                         result += buildResolver(field, false, null, null, null);
                         result += "\n\t\t},\n";
-                    }
-                    else { // If it's an interface, different based resolver
+                    } else { // If it's an interface, different based resolver
                         if (type.type === "InterfaceTypeDefinition") {
                             result += buildResolverInterface();
-                        }
-                        else {
+                        } else {
                             result += buildTypeField(field, field.type + "Type", true);
                             result += "\n";
                             result += buildArgs(field.arguments, hasArguments);
@@ -118,8 +106,7 @@ export const getFieldsParsed = (type: IType, manyToManyTables: any[], typesName:
                             if (relationsBetween === "manyToMany") {
                                 let manyToManyTable = getManyToManyTableBetween(type.typeName, field.type, manyToManyTables);
                                 result += buildResolver(field, hasArguments, type.typeName, relationsBetween, null);
-                            }
-                            else {
+                            } else {
                                 result += buildResolver(field, hasArguments, type.typeName, relationsBetween, null);
                             }
                         }
@@ -135,7 +122,6 @@ export const getFieldsInput = (fields) => {
     let result = "";
     for (let index = 0; index < fields.length; index++) {
         let field = fields[index];
-        let hasArguments = field.arguments[0] ? true : false;
         if (index > 0)
             result += "\t\t";
         switch (field.type) {
@@ -155,8 +141,7 @@ export const getFieldsInput = (fields) => {
             default:
                 if (field.isArray) {
                     result += buildTypeField(field, field.type + "UpdateInput", false);
-                }
-                else {
+                } else {
                     result += field.name + ": { type: GraphQLID },\n";
                 }
         }
@@ -165,16 +150,12 @@ export const getFieldsInput = (fields) => {
 };
 
 /** TYPE HANDLER */
-export const getFieldsParsedHandler = (currentTypeName, fields, isOneToOneChild, parent) => {
+export const getFieldsParsedHandler = (currentTypeName, fields) => {
     let result = "";
     for (let index = 0; index < fields.length; index++) {
         if (fields[index].name === "id") {
-            if (!isOneToOneChild)
-                result += "\t\t\t" + fields[index].name + ": data.Pk_" + currentTypeName + "_id";
-            else
-                result += "\t\t\t" + fields[index].name + ": data.Pk_" + parent + "_id";
-        }
-        else {
+            result += "\t\t\t" + fields[index].name + ": data.Pk_" + currentTypeName + "_id";
+        } else {
             result += "\t\t\t" + fields[index].name + ": data." + fields[index].name;
         }
         if (index < fields.length - 1)
@@ -184,8 +165,8 @@ export const getFieldsParsedHandler = (currentTypeName, fields, isOneToOneChild,
     return result;
 };
 
-export const getFieldsCreate = (currentTypeName, fields, relations, manyToManyTables) => {
-    let sqlFields:any[] = [];
+export const getFieldsCreate = (currentTypeName, fields, relations) => {
+    let sqlFields: any[] = [];
     // Deal with scalar first (removing any Array)
     fields.filter(field => !field.isArray && field.delegated_field.side !== "target").forEach(field => {
         let sqlField = getFieldCreate(field.type, field.name);
@@ -204,7 +185,7 @@ export const getFieldsCreate = (currentTypeName, fields, relations, manyToManyTa
     return sqlFields.filter(field => !field.includes("args.id")).join(` + "," + `);
 };
 
-export const getFieldsName = (tables, fields, currentTypeName, currentSQLTypeName, relations) => {
+export const getFieldsName = (fields, currentTypeName, currentSQLTypeName, relations) => {
     let sqlNames: any[] = [];
     // Deal with scalar first (removing any Array)
     fields.filter(field => !field.isArray && field.delegated_field.side !== "target").forEach(field => {
@@ -261,8 +242,7 @@ const buildTypeField = (field, type, needResolved) => {
             parentheses += ")";
         }
         result += type;
-    }
-    else {
+    } else {
         if (field.noNull) {
             result += "new GraphQLNonNull(";
             parentheses += ")";
@@ -305,25 +285,21 @@ const buildResolver = (field, hasArguments, currentTypeName, relationType, manyT
     let result = "";
     if (hasArguments) {
         result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\treturn dbHandler.handleGet(args, '" + field.type + "Type')\n\t\t\t}";
-    }
-    else {
+    } else {
         if (currentTypeName !== "Query") {
             if (manyToManyTable != null) {
                 result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\treturn dbHandler.handleGet({parentId: obj.id, parentTypeName: info.parentType, relationType: \"" + relationType + "\", tableJunction: \"" + manyToManyTable.sqlname + "\"}, '" + field.type + "Type')\n\t\t\t}";
-            }
-            else {
+            } else {
                 if (!relationType) {
                     // TODO check if other scalar type need casting from being fetch from postgres table
                     if (field.type === "DateTime" || field.type === "Date" || field.type === "Date") {
                         result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\treturn new Date(obj." + field.name + ")\n\t\t\t}"; // Cast into a Date object
                     }
-                }
-                else {
+                } else {
                     result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\tlet result = dbHandler.handleGet({parentId: obj.id, parentTypeName: info.parentType, relationType: \"" + relationType + "\"}, '" + field.type + "Type').then((data) => {\n\t\t\t\treturn data\n\t\t\t})\n\t\t\treturn result\n\t\t\t}";
                 }
             }
-        }
-        else {
+        } else {
             result += "\t\t\tresolve: (obj, args, context, info) => {\n\t\t\t\treturn dbHandler.handleGet(null, '" + field.type + "Type')\n\t\t\t}";
         }
     }
@@ -332,9 +308,7 @@ const buildResolver = (field, hasArguments, currentTypeName, relationType, manyT
 
 // Construct the resolver for interface
 const buildResolverInterface = () => {
-    let result = "";
-    result += "\t\t\tresolve: (obj, args, context) => {\n\t\t\t\treturn resolveType(args)\n\t\t\t}";
-    return result;
+    return "\t\t\tresolve: (obj, args, context) => {\n\t\t\t\treturn resolveType(args)\n\t\t\t}";
 };
 
 const getManyToManyTableBetween = (typeOne, typeTwo, manyToManyTables) => {
