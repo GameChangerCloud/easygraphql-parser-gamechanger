@@ -52,8 +52,7 @@ export {
     getFieldsParsed, getFieldsInput, getFieldsParsedHandler, getFieldsCreate, getFieldsName
 } from "./parsing/fields-parsing"
 export {getAllTypesName, getTypesExceptQueries} from "./parsing/get-types"
-export {getFields, getFieldsDirectiveNames} from "./parsing/get-fields"
-export {getDirectivesNames} from './parsing/get-directives'
+export {getFieldsDirectiveNames} from "./parsing/get-fields"
 export {getRequire} from "./parsing/get-require"
 export {getGraphqlType} from './parsing/get-graphql-type'
 export {getResolveType} from './parsing/get-resolve-type'

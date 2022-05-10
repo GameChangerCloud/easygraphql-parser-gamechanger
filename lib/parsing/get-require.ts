@@ -1,13 +1,15 @@
+import {IType} from "../models/type";
+import {isBasicScalar, isScalar} from "../scalar-managment/manage-scalars";
+
 /** Fonction principale */
-import {isBasicScalar, isPersonalizedScalar, isScalar} from "../scalar-managment/manage-scalars";
 
 // Build the require const type string
-export const getRequire = (type) => {
+export const getRequire = (type: IType) => {
     const requiredTypes = getRequireTypes(type)
     let result = ""
-    for (let index = 0; index < requiredTypes.length; index++) {
-        if (!isPersonalizedScalar(requiredTypes[index])) {
-            result += "const " + requiredTypes[index] + "Type = require('./" + requiredTypes[index].toLowerCase() + "')\n"
+    for (let requiredType of requiredTypes) {
+        if (!isScalar(requiredType)) {
+            result += "const " + requiredType + "Type = require('./" + requiredType.toLowerCase() + "')\n"
         }
     }
     return result
@@ -15,13 +17,13 @@ export const getRequire = (type) => {
 
 /** Fonction utilitaire */
 // Get all the types required, except the current one, to import in file
-const getRequireTypes = (currentType) => {
+const getRequireTypes = (currentType: IType): string[] => {
     let result: any = []
     currentType.fields.forEach(field => {
         let fieldType = field.type
-        if (fieldType !== currentType) {
+        if (fieldType !== currentType.typeName) {
             if (!isScalar(fieldType)) { // If it's a predefined scalars no need to include it
-                if (!result.includes(fieldType))
+                if (!result.includes(fieldType))  // Check if it's not already included (multiple type call in Query)
                     result.push(fieldType)
             }
         }

@@ -36,7 +36,7 @@ describe('get types', function () {
         it('should return all types without queries and mutations', function () {
 
             const RESOURCE_FOLDER = 'test/resources/parsing/get-types/schemas-json'
-            const ALLTYPES_FOLDER = '../../test/resources/parsing/get-types/schemas-all-types-except-queries-and-mutations'
+            const ALL_TYPES_FOLDER = '../../test/resources/parsing/get-types/schemas-all-types-except-queries-and-mutations'
 
             let schemaJSON;
             let resultTypes;
@@ -55,7 +55,7 @@ describe('get types', function () {
 
                 // THEN
                 expectedTypes = fs.readFileSync(
-                    path.join(__dirname, ALLTYPES_FOLDER, file.replace(".json", "-all-types-without-queries-and-mutations.json")),
+                    path.join(__dirname, ALL_TYPES_FOLDER, file.replace(".json", "-all-types-without-queries-and-mutations.json")),
                     'utf8'
                 );
                 expect(resultTypes).to.exist

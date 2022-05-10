@@ -1,4 +1,4 @@
-import {IType} from "../models/type";
+import {Type} from "../models/type";
 import {Scalars} from "../constants/scalar";
 import {isBasicScalar, isScalar} from "../scalar-managment/manage-scalars";
 /** Fonctions principales */
@@ -6,13 +6,13 @@ import {isBasicScalar, isScalar} from "../scalar-managment/manage-scalars";
 
 // Tables
 // Get all the tables, with columns, based on the types we have
-export const getAllTables = (types) => {
+export const getAllTables = (types: Type[]) => {
     let allTables: any = []
-    let typesNameArray = types.map(type => type.typeName)
+    let typesNameArray: string[] = types.map(type => type.typeName)
     types.forEach(type => {
         let tableTemp: any = []
         // Fill up the infos on scalar field (int, string, etc.)
-        if (type.typeName !== "Query" && type.typeName !== "Mutation" && type.typeName !== "Subscription" && !isScalar(type.typeName)) {
+        if (type.isNotOperation() && !isScalar(type.typeName)) {
             //get scalar field infos
             tableTemp.push(...getScalarFieldInfo(type, typesNameArray))
 
@@ -43,7 +43,7 @@ export const getInitEachFieldsModelsJS = (types) => {
 const getInitEachModelsFields = (types) => {
     let s = '';
     types.forEach(type => {
-        if (type.typeName !== "Query" && type.typeName !== "Mutation" && type.typeName !== "Subscription") {
+        if (type.isNotOperation()) {
             let nameList = type.typeName.toLowerCase()
             s += 'for(let i = 0; i < ' + nameList + 'Tab.length; i++){\n\t' + nameList + 'Tab[i] = update' + type.typeName + '(' + nameList + 'Tab[i], i);\n}';
         }
@@ -51,7 +51,7 @@ const getInitEachModelsFields = (types) => {
     return s;
 }
 
-const getScalarFieldInfo = (currentType: IType, typesNameArray: string[]) => {
+const getScalarFieldInfo = (currentType: Type, typesNameArray: string[]) => {
     let tableTemp: any[] = []
     currentType.fields.forEach(field => {
         let fieldType = field.type

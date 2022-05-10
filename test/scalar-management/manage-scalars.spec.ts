@@ -1,6 +1,5 @@
 import {getSQLTableName, isBasicScalar, isScalar, Scalars} from "../../lib";
 import {expect} from "chai";
-import exp = require("constants");
 import {getFieldCreate, getFieldName} from "../../lib/scalar-managment/manage-scalars";
 
 describe('scalar-management methods', () => {
