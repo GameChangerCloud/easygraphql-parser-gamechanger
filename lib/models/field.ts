@@ -1,4 +1,4 @@
-import { Relationships } from "../constants/relationships";
+import {Relationships} from "../constants/relationships";
 
 export interface IField {
     name : string;
@@ -36,6 +36,7 @@ export class Field {
     isDeprecated : boolean;
     joinTable : any;
     sqlType : string;
+    activeSide?: boolean
 
     constructor(
         name: string,
@@ -64,7 +65,6 @@ export class Field {
     /**
      * Set up types fields to handle tracking of foreign key that might have been added by other types
      * Init Object type parameters . obj = {key1 : value1, key2 : value2 ....}
-     * @param {*} types list of types
      * @returns nothing
      */
     initObjectParameters(){

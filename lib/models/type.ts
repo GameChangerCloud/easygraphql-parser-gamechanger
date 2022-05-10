@@ -23,7 +23,7 @@ export class Type {
     fields: IField[];
     implementedTypes: any;
 
-    constructor(type: string, typeName: string, sqlTypeName: string, description: string, directives: any[], implementedTypes: any,) {
+    constructor(type: string, typeName: string, sqlTypeName: string, description: string, directives: any[], implementedTypes: any[],) {
         this.type = type
         this.typeName = typeName
         this.sqlTypeName = sqlTypeName
@@ -73,4 +73,9 @@ export class Type {
     addField(field) {
         this.fields.push(field)
     }
+
+    isNotOperation() {
+        return this.typeName !== "Query" && this.typeName !== "Mutation" && this.typeName !== "Subscription";
+    }
+
 }

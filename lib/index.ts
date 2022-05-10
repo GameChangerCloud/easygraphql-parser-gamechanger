@@ -29,7 +29,7 @@ export {deprecatedDirective} from "./directive-management/deprecated-directive"
 /**
  * Scalar-management export
  */
-export {isBasicType, isScalar} from "./scalar-managment/manage-scalars"
+export {isBasicScalar, isPersonalizedScalar, isScalar} from "./scalar-managment/manage-scalars"
 
 /**
  *  Utils export
@@ -48,10 +48,11 @@ export {matchString} from "./matching/match-string"
 /**
  * Parsing export
  */
-export {getFieldsParsed, getFieldsInput, getFieldsParsedHandler, getFieldsCreate, getFieldsName} from "./parsing/fields-parsing"
+export {
+    getFieldsParsed, getFieldsInput, getFieldsParsedHandler, getFieldsCreate, getFieldsName
+} from "./parsing/fields-parsing"
 export {getAllTypesName, getTypesExceptQueries} from "./parsing/get-types"
-export {getFields, getFieldsDirectiveNames} from "./parsing/get-fields"
-export {getDirectivesNames} from './parsing/get-directives'
+export {getFieldsDirectiveNames} from "./parsing/get-fields"
 export {getRequire} from "./parsing/get-require"
 export {getGraphqlType} from './parsing/get-graphql-type'
 export {getResolveType} from './parsing/get-resolve-type'

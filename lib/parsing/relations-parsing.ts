@@ -17,7 +17,7 @@ export const getRelations = (types, env) => {
     let manyToMany: any = []
 
     types.forEach(currentType => {
-        if (currentType.typeName != "Query" && currentType.typeName != "Mutation" && currentType.typeName != "Subscription") {
+        if (currentType.type === "ObjectTypeDefinition" && currentType.isNotOperation()) {
             let relationalFields = getRelationalFields(currentType.fields)
             relationalFields.forEach(relationalField => { // Check if it's not a scalar currentType
                 // we skip fields that were being added by other types ( ex: ManyOnly relation)
@@ -42,13 +42,13 @@ export const getRelations = (types, env) => {
                                 {
                                     "fieldName": relationalField.name.toLowerCase(),
                                     "type": relationalField.type,
-                                    "constraint": "FOREIGN KEY (\"" + relationalField.name.toLowerCase() + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
+                                    "constraint": "FOREIGN KEY (\"" + relationalField.name.toLowerCase() + "_id\") REFERENCES " + getSQLTableName(relationalField.type) + " (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
                                 })
                             // add info about selfType
                             relationalField["joinTable"]["contains"].push({
                                 "fieldName": relationalField.type.toLowerCase(),
                                 "type": relationalField.type,
-                                "constraint": "FOREIGN KEY (\"" + relationalField.type.toLowerCase() + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
+                                "constraint": "FOREIGN KEY (\"" + relationalField.type.toLowerCase() + "_id\") REFERENCES " + getSQLTableName(relationalField.type) + " (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
 
 
                             })

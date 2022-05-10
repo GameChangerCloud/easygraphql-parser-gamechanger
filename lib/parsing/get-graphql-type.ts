@@ -1,6 +1,9 @@
 import {IType} from "../models/type";
+import {NotUsedTypeError} from "./error/not-used-type.error";
 
-export const getGraphqlType = (type: IType) => {
+type GraphQLStringType = "GraphQLEnumType" | "GraphQLInterfaceType" | "GraphQLObjectType" | "GraphQLScalarType";
+
+export function getGraphqlType(type: IType): GraphQLStringType {
     switch (type.type) {
         case "EnumTypeDefinition":
             return "GraphQLEnumType"
@@ -10,5 +13,7 @@ export const getGraphqlType = (type: IType) => {
             return "GraphQLObjectType"
         case "ScalarTypeDefinition":
             return "GraphQLScalarType"
+        default:
+            throw new NotUsedTypeError(type.type);
     }
 }

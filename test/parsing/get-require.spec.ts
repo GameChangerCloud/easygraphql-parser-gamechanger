@@ -1,4 +1,4 @@
-import {getRequire, Scalars} from "../../lib";
+import {getRequire} from "../../lib";
 import util from 'util'
 import {expect} from "chai";
 import fs from "fs";
@@ -14,7 +14,7 @@ describe('get require methods', function () {
                 'utf8'
             ));
             //WHEN
-            const resultString = getRequire(currentType,Object.values(Scalars))
+            const resultString = getRequire(currentType)
             const expectedString = "const StudioType = require('./studio')\n"
             // THEN
             expect(resultString).to.exist
@@ -27,7 +27,7 @@ describe('get require methods', function () {
                 'utf8'
             ));
             //WHEN
-            const resultString = getRequire(currentType,Object.values(Scalars))
+            const resultString = getRequire(currentType)
             const expectedString = ""
             // THEN
             expect(resultString).to.exist
