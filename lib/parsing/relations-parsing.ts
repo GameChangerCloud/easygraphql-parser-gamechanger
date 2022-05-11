@@ -1,401 +1,237 @@
 /** Fonctions principales */
 import {Relationships} from "../constants/relationships";
 import {getSQLTableName} from "../utils/get-sql-table-name";
-import {IType} from "../models/type";
-
-const manageScalars = require('../scalar-managment/manage-scalars')
+import {IType, Type} from "../models/type";
+import {Field, IField} from "../models/field";
+import {isScalar} from "../scalar-managment/manage-scalars";
+import {OneToOneRelationNotAllowed} from "./error/one-to-one-not-allowed";
+import util from "util";
 
 /**
  *  Compute relationships oneToMany, manyToMany, etc..
  * @param {*} types contains all types with associated attributes read from easygraphql-parser
- * @param {*} typenames names assocoated with each type
- * @param {*} env allows to throw errors of not supported relations without stacktrace
  * @returns
  */
-export const getRelations = (types, env) => {
-    let typeNames = types.map(type => type.typeName)
-    let manyToMany: any = []
+export const getRelations = (types: Type[]) => {
+    let manyToMany: any[] = [];
+    let targetSQLTypeName: string;
+    let currentSQLTypeName: string;
+    types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
+        .forEach(currentType => {
+            let relationalFields = getRelationalFields(currentType.fields);
+            relationalFields.forEach(relationalField => {
+                let inn = relationalField.isArray ? 2 : 1;
+                let out = getRelationOf(relationalField.type, types, currentType.typeName);
+                switch (true) {     //Switch true to check multiple arguments
+                    /** OneOnly relationships **/
+                    case inn === 1 && out === 0:
+                        currentType.relationList.push({
+                            type: relationalField.type,
+                            relation: Relationships.oneOnly
+                        });
 
-    types.forEach(currentType => {
-        if (currentType.type === "ObjectTypeDefinition" && currentType.isNotOperation()) {
-            let relationalFields = getRelationalFields(currentType.fields)
-            relationalFields.forEach(relationalField => { // Check if it's not a scalar currentType
-                // we skip fields that were being added by other types ( ex: ManyOnly relation)
-                if (!relationalField["delegated_field"]["state"]) {
-                    let out = getRelationOf(relationalField.type, types, typeNames, currentType.typeName)
-                    let inn = getRelationOf(currentType.typeName, types, typeNames, relationalField.type)
-                    if (out == 2 && inn == 2) { // Checking if self join (currentType related to itself)
+                        targetSQLTypeName = getSQLTableName(relationalField.type);
+                        relationalField.relation = true;
+                        relationalField.relationType = Relationships.oneOnly;
+                        relationalField.foreign_key = {
+                            name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
+                            type: "int",
+                            noNull: relationalField.noNull,
+                            isArray: relationalField.isArray,
+                            isForeignKey: true,
+                            constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
+                        };
+                        break;
+                    /** OneToOne || SelfJoinOne relationships **/
+                    case inn === 1 && out === 1:
                         if (relationalField.type === currentType.typeName) {
-                            currentType["relationList"].push(
-                                {
-                                    "type": relationalField.type,
-                                    "relation": Relationships.selfJoinMany
-                                })
-                            relationalField["relation"] = true
-                            relationalField["relationType"] = Relationships.selfJoinMany
-                            relationalField["activeSide"] = true
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.selfJoinOne
+                            });
 
-                            // add info of joinTable Associated
-                            relationalField["joinTable"]["state"] = true
-                            relationalField["joinTable"]["name"] = currentType.typeName + "_" + relationalField.type + "_" + relationalField.name
-                            relationalField["joinTable"]["contains"].push(
-                                {
-                                    "fieldName": relationalField.name.toLowerCase(),
-                                    "type": relationalField.type,
-                                    "constraint": "FOREIGN KEY (\"" + relationalField.name.toLowerCase() + "_id\") REFERENCES " + getSQLTableName(relationalField.type) + " (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-                                })
-                            // add info about selfType
-                            relationalField["joinTable"]["contains"].push({
-                                "fieldName": relationalField.type.toLowerCase(),
-                                "type": relationalField.type,
-                                "constraint": "FOREIGN KEY (\"" + relationalField.type.toLowerCase() + "_id\") REFERENCES " + getSQLTableName(relationalField.type) + " (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-
-
-                            })
-                            // the field won't appear in model
-                            relationalField["in_model"] = false
-
-                            // No addition needed for ManyToMany --> only through join table
+                            targetSQLTypeName = getSQLTableName(relationalField.type);
+                            relationalField.relation = true;
+                            relationalField.relationType = Relationships.selfJoinOne;
+                            relationalField.foreign_key = {
+                                name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
+                                type: "int",
+                                noNull: relationalField.noNull,
+                                isArray: relationalField.isArray,
+                                isForeignKey: true,
+                                constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
+                            };
                         } else {
-                            if (relationalField.directives.length > 0 && relationalField.directives.filter(directive => directive.name == 'hasInverse').length > 0) {
-                                currentType["relationList"].push({
-                                    "type": relationalField.type,
-                                    "relation": Relationships.manyToMany
-                                })
+                            //TODO Management of oneToOne relations
+                            let targetedType = types.find(type => type.typeName === relationalField.type)
+                            let targetField = targetedType?.fields.find(field => field.type === currentType.typeName)
 
-                                relationalField["relation"] = true
-                                relationalField["relationType"] = Relationships.manyToMany
-
-                                relationalField["activeSide"] = true
-                                // add info of jointable Associated
-                                relationalField["joinTable"]["state"] = true
-                                relationalField["joinTable"]["name"] = currentType.typeName + "_" + relationalField.type + "_" + relationalField.name
-                                relationalField["joinTable"]["contains"].push({
-                                    "fieldName": relationalField.name.toLowerCase(),
-                                    "type": relationalField.type,
-                                    "constraint": "FOREIGN KEY (\"" + relationalField.name + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-
-                                })
-
-                                // gets the related field of join table in the other side thanks to hasInverseDirective info
-                                let hasInverseFieldName = relationalField.directives.filter(directive => directive.name == 'hasInverse')[0].args[0].value
-                                // push it into joinTable info
-                                relationalField["joinTable"]["contains"].push({
-                                    "fieldName": currentType.typeName.toLowerCase(),
-                                    "type": currentType.typeName,
-                                    "constraint": "FOREIGN KEY (\"" + currentType.typeName.toLowerCase() + "_id\") REFERENCES \"" + getSQLTableName(currentType.typeName) + "\" (\"Pk_" + getSQLTableName(currentType.typeName) + "_id\")"
-                                })
-
-                                manyToMany.push({"type": currentType, "relationship": relationalField})
-                                // the field wont appear in model
-                                relationalField["in_model"] = false
-                                // No addition needed for ManyToMany --> only through join table
-
-                            } else {
-                                // standard manyToMany tables but we try to not duplicate tables from each side of relation
-                                currentType["relationList"].push({
-                                    "type": relationalField.type,
-                                    "relation": Relationships.manyToMany
-                                })
-
-                                relationalField["relation"] = true
-                                relationalField["relationType"] = Relationships.manyToMany
-                                // add info of jointable Associated
-                                relationalField["joinTable"]["state"] = true
-                                relationalField["joinTable"]["name"] = currentType.typeName + "_" + relationalField.type + "_" + relationalField.name
-                                relationalField["joinTable"]["contains"].push({
-                                    "fieldName": relationalField.name.toLowerCase(),
-                                    "type": relationalField.type,
-                                    "constraint": "FOREIGN KEY (\"" + relationalField.name + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-
-
-                                })
-                                // push into jointable info about related currentType . field name is by default currentType name
-                                // push it into joinTable info
-                                relationalField["joinTable"]["contains"].push({
-                                    "fieldName": currentType.typeName.toLowerCase(),
-                                    "type": currentType.typeName,
-                                    "constraint": "FOREIGN KEY (\"" + currentType.typeName.toLowerCase() + "_id\") REFERENCES \"" + getSQLTableName(currentType.typeName) + "\" (\"Pk_" + getSQLTableName(currentType.typeName) + "_id\")"
-
-                                })
-
-                                manyToMany.push({"type": currentType, "relationship": relationalField})
-                                // the field wont appear in model
-                                relationalField["in_model"] = false
-
-                                // todo : to be clarified
+                            if (targetField?.noNull && relationalField.noNull) {
+                                throw new OneToOneRelationNotAllowed()
                             }
 
-                        }
-                    } else if (out == 2 && inn == 1) {
-                        currentType["relationList"].push({
-                            "type": relationalField.type,
-                            "relation": Relationships.oneToMany
-                        })
-
-
-                        relationalField["relationType"] = Relationships.oneToMany
-                        // A Fk field has to be added to the targeted object
-                        let targetType = types.filter(type => type.typeName == relationalField.type)
-                        if (targetType.length != 1) {
-                            console.error('Reference to currentType ' + relationalField.type + ' found 0 or several times')
-                        } else {
-                            // set relation status to each side of relation
-                            relationalField["relation"] = true
-
-                            // tracks the fk that were added to the targetType
-                            relationalField["delegated_field"]["associatedWith"]["type"] = targetType[0].typeName
-                            relationalField["delegated_field"]["associatedWith"]["fieldName"] = "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id"
-                            relationalField["delegated_field"]["side"] = "origin"
-
-
-                            // copy all info from field to fk to be added in targetType
-                            let delegatedField = JSON.parse(JSON.stringify(relationalField))
-                            // delegated field is a foreign Key
-                            delegatedField["foreign_key"] = {
-                                "name": "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id",
-                                "type": "int",
-                                "noNull": relationalField.noNull,
-                                "isArray": false,
-                                "foreignKey": true,
-                                "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id\") REFERENCES \"" + currentType.sqlTypeName + "\" (\"Pk_" + currentType.sqlTypeName + "_id\")"
-
-
-                            }
-                            delegatedField["delegated_field"]["state"] = true
-                            delegatedField["name"] = "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id",
-                                delegatedField["type"] = "Int"
-
-                            // tracks the currentType who added the Fk
-                            delegatedField["delegated_field"]["associatedWith"]["type"] = currentType.typeName
-                            delegatedField["delegated_field"]["associatedWith"]["fieldName"] = relationalField.name
-                            delegatedField["delegated_field"]["side"] = "target"
-
-
-                            // the field wont appear in model
-                            relationalField["in_model"] = false
-
-                            targetType[0].fields.push(delegatedField)
-
-                        }
-
-
-                    } else if (out == 1 && inn == 2) {
-                        currentType["relationList"].push({
-                            "type": relationalField.type,
-                            "relation": Relationships.manyToOne
-                        })
-
-
-                        relationalField["relationType"] = Relationships.manyToOne
-                        // a Fk field has to be added to the current object
-
-                        let targetType = types.filter(type => type.typeName == relationalField.type)
-                        relationalField["relation"] = true
-
-                        // tracks the fk that were added to the targetType
-                        relationalField["delegated_field"]["associatedWith"]["type"] = targetType[0].typeName
-                        relationalField["delegated_field"]["associatedWith"]["fieldName"] = "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id"
-                        relationalField["delegated_field"]["side"] = "origin"
-
-
-                        // if field is null, theres a composition relation, we create a joinTable
-                        if (relationalField.noNull) {
-
-                            relationalField["joinTable"]["state"] = true
-                            relationalField["joinTable"]["name"] = currentType.typeName + "_" + relationalField.type + "_" + relationalField.name
-                            relationalField["joinTable"]["contains"].push({
-                                "fieldName": relationalField.name,
-                                "type": relationalField.type,
-                                "constraint": "FOREIGN KEY (\"" + relationalField.name + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-
-                            })
-                            relationalField["joinTable"]["contains"].push({
-                                "fieldName": currentType.typeName.toLowerCase(),
-                                "type": currentType.typeName,
-                                "constraint": "FOREIGN KEY (\"" + currentType.typeName.toLowerCase() + "_id\") REFERENCES \"" + getSQLTableName(currentType.typeName) + "\" (\"Pk_" + getSQLTableName(currentType.typeName) + "_id\")"
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.oneToOne
                             })
 
-                        }
-                        // if field can be null, then we do classic processing
-                        else {
-                            // copy all info from field to fk to be added in targetType
-                            let delegatedField = JSON.parse(JSON.stringify(relationalField))
-                            // delegated field is a foreign Key
-                            delegatedField["foreign_key"] = {
-                                "name": "Fk_" + relationalField.name + "_" + getSQLTableName(relationalField.type) + "_id",
-                                "type": "int",
-                                "noNull": relationalField.noNull,
-                                "isArray": false,
-                                "foreignKey": true,
-                                "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + getSQLTableName(relationalField.type) + "_id\") REFERENCES \"" + currentType.sqlTypeName + "\" (\"Pk_" + currentType.sqlTypeName + "_id\")"
-
+                            if (!targetField?.oneToOneInfo) {
+                                targetSQLTypeName = getSQLTableName(relationalField.type)
+                                relationalField.relation = true;
+                                relationalField.relationType = Relationships.oneToOne
+                                relationalField.foreign_key = {
+                                    name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
+                                    type: "int",
+                                    noNull: relationalField.noNull,
+                                    isArray: relationalField.isArray,
+                                    isForeignKey: true,
+                                    constraint: `FOREIGN KEY ("Fk_${relationalField.name}_id") REFERENCES "${targetSQLTypeName}"`
+                                }
+                                relationalField.oneToOneInfo = `Fk_${relationalField.name}_${targetSQLTypeName}_id`
                             }
-                            delegatedField["delegated_field"]["state"] = true
-                            delegatedField["name"] = "Fk_" + relationalField.name + "_" + getSQLTableName(relationalField.type) + "_id",
-                                delegatedField["type"] = "Int"
-
-                            // tracks the currentType who added the Fk
-                            delegatedField["delegated_field"]["associatedWith"]["type"] = currentType.typeName
-                            delegatedField["delegated_field"]["associatedWith"]["fieldName"] = relationalField.name
-                            delegatedField["delegated_field"]["side"] = "target"
-
-
-                            targetType[0].fields.push(delegatedField)
                         }
-                        // the field wont appear in model
-                        relationalField["in_model"] = false
+                        break;
+                    /** OneToMany relationships **/
+                    case inn === 1 && out === 2:
+                        currentType.relationList.push({
+                            type: relationalField.type,
+                            relation: Relationships.oneToMany
+                        });
+
+                        targetSQLTypeName = getSQLTableName(relationalField.type)
+                        relationalField.relation = true;
+                        relationalField.relationType = Relationships.oneToMany;
+                        relationalField.foreign_key = {
+                            name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
+                            type: "int",
+                            noNull: relationalField.noNull,
+                            isArray: relationalField.isArray,
+                            isForeignKey: true,
+                            constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
+                        };
+                        break;
+                    /** ManyOnly relationships **/
+                    case inn === 2 && out === 0:
+                        currentType.relationList.push({
+                            type: relationalField.type,
+                            relation: Relationships.manyOnly
+                        });
+
+                        targetSQLTypeName = getSQLTableName(relationalField.type);
+                        currentSQLTypeName = getSQLTableName(currentType.typeName)
+
+                        relationalField.relation = true;
+                        relationalField.relationType = Relationships.manyOnly;
+
+                        // Foreign key field that will be added to the target type
+                        let addedForeignKeyField: Field = JSON.parse(JSON.stringify(relationalField))
+
+                        // delegate object completion
+                        relationalField.delegated_field.side = "origin";
+                        relationalField.delegated_field.associatedWith.type = relationalField.type;
+                        relationalField.delegated_field.associatedWith.fieldName = `Fk_${relationalField.name}_${currentSQLTypeName}_id`;
+
+                        // Field does not appear in model
+                        relationalField.in_model = false
+
+                        addedForeignKeyField.name = `Fk_${relationalField.name}_${currentSQLTypeName}_id`
+                        addedForeignKeyField.type = "Int";
+                        addedForeignKeyField.isArray = false;
+                        addedForeignKeyField.noNull = relationalField.noNullArrayValues
+
+                        addedForeignKeyField.foreign_key = {
+                            name: `Fk_${relationalField.name}_${currentSQLTypeName}_id`,
+                            type: "int",
+                            noNull: relationalField.noNullArrayValues,
+                            isArray: false,
+                            isForeignKey: true,
+                            constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${currentSQLTypeName}_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
+                        }
+
+                        addedForeignKeyField.delegated_field.state = true;
+                        addedForeignKeyField.delegated_field.side = "target";
+                        addedForeignKeyField.delegated_field.associatedWith.type = currentType.typeName;
+                        addedForeignKeyField.delegated_field.associatedWith.fieldName = relationalField.name;
 
 
-                    } else if (out == 1 && inn == 1) {
-                        // Checking if self join (currentType related to itself)
+                        let targetType = types.find(type => type.typeName === relationalField.type)
+                        targetType?.fields.push(addedForeignKeyField);
+                        break;
+                    /** ManyToOne **/
+                    case inn === 2 && out === 1:
+                        currentType.relationList.push({
+                            type: relationalField.type,
+                            relation: Relationships.manyToOne
+                        });
+                        break;
+                    /** ManyToMany | SelfJoinMany **/
+                    case inn === 2 && out === 2:
+                        targetSQLTypeName = getSQLTableName(relationalField.type)
+                        currentSQLTypeName = getSQLTableName(currentType.typeName)
+
                         if (relationalField.type === currentType.typeName) {
-                            currentType["relationList"].push({
-                                "type": relationalField.type,
-                                "relation": Relationships.selfJoinOne
-                            })
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.selfJoinMany
+                            });
 
-                            relationalField["relation"] = true
-                            relationalField["relationType"] = Relationships.selfJoinOne
-                            relationalField["foreign_key"] = {
-                                "name": "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id",
-                                "type": "int",
-                                "noNull": relationalField.noNull,
-                                "isArray": false,
-                                "foreignKey": true,
-                                "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id\") REFERENCES \"" + currentType.sqlTypeName + "\" (\"Pk_" + currentType.sqlTypeName + "_id\")"
+                            relationalField.relationType = Relationships.selfJoinMany;
 
-                            }
-
+                            relationalField.joinTable.state = true;
+                            relationalField.joinTable.name = `${currentType.typeName}_${currentType.typeName}_${relationalField.name}`;
+                            relationalField.joinTable.contains.push({
+                                fieldName: `${currentSQLTypeName}1_id`,
+                                type: relationalField.type,
+                                constraint: `FOREIGN KEY ("${currentSQLTypeName}1_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
+                            });
+                            relationalField.joinTable.contains.push({
+                                fieldName: `${currentSQLTypeName}2_id`,
+                                type: currentType.typeName,
+                                constraint: `FOREIGN KEY ("${currentSQLTypeName}2_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
+                            });
                         } else {
-                            // insert info about oneToOne relation to the target
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.manyToMany
+                            });
 
+                            relationalField.relationType = Relationships.manyToMany;
 
-                            let targetType = types.filter(type => type.typeName == relationalField.type)
-                            let targetField = targetType[0].fields.filter(field => field.type === currentType.typeName)
+                            let targetType = types.find(type => type.typeName === relationalField.type);
+                            let targetField = targetType?.fields.find(field => field.type === currentType.typeName);
 
-                            // Detects if a 1-1 relation is present. Not supported on sql
-                            if (targetField[0].noNull && relationalField.noNull) {
-                                env.error("1-1 Relation not allowed, chekout \n" + relationalField.name + " field on " + targetField[0].type + "\nor \n" + targetField[0].name + " field on " + relationalField.type);
+                            // If the joinTable exists from the other entity we don't need to create a new one
+                            let alreadyDefinedRelation = manyToMany.filter(relation => relation.field === targetField?.name && relationalField.name === relation.target)
+                            if (!alreadyDefinedRelation[0]) {
+                                let jointTableName = `${currentType.typeName}_${relationalField.type}_${relationalField.name}`
+                                manyToMany.push({
+                                    name: jointTableName,
+                                    field: relationalField.name,
+                                    target: targetField?.name
+                                })
+
+                                relationalField.joinTable.state = true;
+                                relationalField.joinTable.name = jointTableName;
+                                relationalField.joinTable.contains.push({
+                                    fieldName: `${targetSQLTypeName}_id`,
+                                    type: relationalField.type,
+                                    constraint: `FOREIGN KEY ("${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
+                                });
+                                relationalField.joinTable.contains.push({
+                                    fieldName: `${currentSQLTypeName}_id`,
+                                    type: currentType.typeName,
+                                    constraint: `FOREIGN KEY ("${currentSQLTypeName}_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
+                                });
                             }
-
-                            relationalField["oneToOneInfo"] = {
-                                "fkName": "Fk_" + targetField[0].name + "_" + getSQLTableName(targetField[0].type) + "_id"
-                            }
-
-
-                            currentType["relationList"].push({
-                                "type": relationalField.type,
-                                "relation": Relationships.oneToOne
-                            })
-                            relationalField["relation"] = true
-                            relationalField["relationType"] = Relationships.oneToOne
-                            // Both object has to integrate a Fk to Pk but each side is processed in each currentType
-                            relationalField["foreign_key"] = {
-                                "name": "Fk_" + relationalField.name + "_" + getSQLTableName(relationalField.type) + "_id",
-                                "type": "int",
-                                "noNull": relationalField.noNull,
-                                "isArray": false,
-                                "foreignKey": true,
-                                "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + getSQLTableName(relationalField.type) + "_id\") REFERENCES \"" + getSQLTableName(relationalField.type) + "\" (\"Pk_" + getSQLTableName(relationalField.type) + "_id\")"
-                            }
-
-
                         }
-                    }
-                    // One only
-                    else if ((out == 0 && inn == 1) || (out == 1 && inn == 0)) {
-                        currentType["relationList"].push({
-                            "type": relationalField.type,
-                            "relation": Relationships.oneOnly
-                        })
-
-                        relationalField["relation"] = true
-                        relationalField["relationType"] = Relationships.oneOnly
-                        // Fk to target Pk id has to be added in the current currentType
-                        let targetSQLTypeName = getSQLTableName(relationalField.type)
-                        relationalField["foreign_key"] = {
-                            "name": "Fk_" + relationalField.name + "_" + targetSQLTypeName + "_id",
-                            "type": "int",
-                            "noNull": relationalField.noNull,
-                            "isArray": false,
-                            "foreignKey": true,
-                            "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + targetSQLTypeName + "_id\") REFERENCES \"" + targetSQLTypeName + "\" (\"Pk_" + targetSQLTypeName + "_id\")"
-                        }
-                    }
-                    // ManyOnly
-                    else if ((out == 0 && inn == 2) || (out == 2 && inn == 0)) {
-                        currentType["relationList"].push({
-                            "type": relationalField.type,
-                            "relation": Relationships.manyOnly
-                        })
-
-                        relationalField["relationType"] = Relationships.manyOnly
-                        // Fk to current Pk id has to be added in the targeted currentType
-                        let targetType = types.filter(type => type.typeName == relationalField.type)
-                        if (targetType.length != 1) {
-                            console.error('Reference to currentType ' + relationalField.type + ' found 0 or several times')
-                        } else {
-                            // set relation status to each side of relation
-                            relationalField["relation"] = true
-
-                            // tracks the fk that were added to the targetType
-                            relationalField["delegated_field"]["associatedWith"]["type"] = targetType[0].typeName
-                            relationalField["delegated_field"]["associatedWith"]["fieldName"] = "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id"
-                            relationalField["delegated_field"]["side"] = "origin"
-
-
-                            // copy all info from field to fk to be added in targetType
-                            let delegatedField = JSON.parse(JSON.stringify(relationalField))
-                            // delegated field is a foreign Key
-                            delegatedField["foreign_key"] = {
-                                "name": "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id",
-                                "type": "int",
-                                "noNull": relationalField.noNull,
-                                "isArray": false,
-                                "foreignKey": true,
-                                "constraint": "FOREIGN KEY (\"Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id\") REFERENCES \"" + currentType.sqlTypeName + "\" (\"Pk_" + currentType.sqlTypeName + "_id\")"
-
-                            }
-                            delegatedField["delegated_field"]["state"] = true
-                            delegatedField["name"] = "Fk_" + relationalField.name + "_" + currentType.sqlTypeName + "_id",
-                                delegatedField["type"] = "Int"
-
-
-                            // tracks the currentType who added the Fk
-                            delegatedField["delegated_field"]["associatedWith"]["type"] = currentType.typeName
-                            delegatedField["delegated_field"]["associatedWith"]["fieldName"] = relationalField.name
-                            delegatedField["delegated_field"]["side"] = "target"
-
-                            // the field wont appear in model
-                            relationalField["in_model"] = false
-
-
-                            targetType[0].fields.push(delegatedField)
-
-                        }
-                    }
-                    // Remove the relationship from the field : WHY ?
-                    //currentType.fields = currentType.fields.filter((e) => e !== relationalField)
+                        relationalField.relation = true;
+                        relationalField.in_model = false
+                        break;
                 }
             })
-        }
-    })
-
-    // Todo filter manyToMany relationship to keep only 1 active side
-    for (let index1 = 0; index1 < manyToMany.length; index1++) {
-        // find a reciproq relationship
-        for (let index2 = index1 + 1; index2 < manyToMany.length; index2++) {
-            if (manyToMany[index1].relationship.type == manyToMany[index2].type.typeName && manyToMany[index2].relationship.directives.length > 0 && manyToMany[index2].relationship.directives.filter(directive => directive.name == 'hasInverse').length > 0) {
-                manyToMany[index2].relationship.activeSide = false // Todo should be reported in the type object
-                manyToMany[index2].relationship.joinTable = manyToMany[index1].relationship.joinTable
-            } else {
-                manyToMany[index2].relationship.activeSide = true
-            }
-
-        }
-    }
-
+        })
+    console.log(manyToMany)
+    console.log(util.inspect(types, false, null, true))
     return types
 }
 
@@ -478,15 +314,8 @@ export const getQuerySelfJoinMany = (currentTypeName, fields) => {
 
 /** Fonctions utilitaires */
 
-const getRelationalFields = (fields) => {
-    const lst = fields.filter(field =>
-        field.type != "String"
-        && field.type != "ID"
-        && field.type != "Int"
-        && field.type != "Boolean"
-        && !manageScalars.isScalar(field.type)
-        && field.type != "foreign_key")
-    return lst;
+const getRelationalFields = (fields: IField[]) => {
+    return fields.filter(field => !isScalar(field.type))
 }
 
 /**
@@ -496,13 +325,10 @@ const getRelationalFields = (fields) => {
  * @returns 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
  * @description Doesn't work if there is several time the same type referenced in the fileds !
  */
-const getManyOrOne = (fields, currentType) => {
-    for (let index = 0; index < fields.length; index++) {
-        if (fields[index].type == currentType) {
-            if (fields[index].isArray) {
-                return 2;
-            }
-            return 1;
+const getManyOrOne = (fields: IField[], currentTypeName: string) => {
+    for (let field of fields) {
+        if (field.type === currentTypeName) {
+            return field.isArray ? 2 : 1;
         }
     }
     return 0;
@@ -510,17 +336,16 @@ const getManyOrOne = (fields, currentType) => {
 
 /**
  *
- * @param {*} element : Target type for the relation
+ * @param {*} targetTypeName : Target type for the relation
  * @param {*} types : Types defined in the schema
  * @param {*} typeNames : Typenames defined in the schema
- * @param {*} currentType : Current Type being processed
+ * @param {*} currentTypeName : Current Type being processed
  * @returns : 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
  */
-const getRelationOf = (element, types, typeNames, currentType) => {
-    for (let index = 0; index < types.length; index++) {
-        if (typeNames[index] == element) {
-            let fields = types[index].fields
-            return getManyOrOne(fields, currentType)
+const getRelationOf = (targetTypeName: string, types: IType[], currentTypeName: string) => {
+    for (let type of types) {
+        if (type.typeName === targetTypeName) {
+            return getManyOrOne(type.fields, currentTypeName)
         }
     }
     return 0;
