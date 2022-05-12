@@ -1,0 +1,94 @@
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Movie",
+    "sqlTypeName": "movie",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "characters",
+        "type": "Actor",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": true,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": null,
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": "origin",
+          "associatedWith": {
+            "type": "Actor",
+            "fieldName": "Fk_characters_movie_id"
+          }
+        },
+        "in_model": false,
+        "joinTable": {
+          "state": false,
+          "name": null,
+          "contains": []
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "manyOnly"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Actor",
+        "relation": "manyOnly"
+      }
+    ]
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Actor",
+    "sqlTypeName": "actor",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "Fk_characters_movie_id",
+        "type": "Int",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": false,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": {
+          "name": "Fk_characters_movie_id",
+          "type": "int",
+          "noNull": false,
+          "isArray": false,
+          "isForeignKey": true,
+          "constraint": "FOREIGN KEY (\"Fk_characters_movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+        },
+        "relation": true,
+        "delegated_field": {
+          "state": true,
+          "side": "target",
+          "associatedWith": {
+            "type": "Movie",
+            "fieldName": "characters"
+          }
+        },
+        "in_model": true,
+        "joinTable": {
+          "state": false,
+          "name": null,
+          "contains": []
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "manyOnly"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": []
+  }
+]

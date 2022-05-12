@@ -4,8 +4,7 @@ import {getSQLTableName} from "../utils/get-sql-table-name";
 import {IType, Type} from "../models/type";
 import {Field, IField} from "../models/field";
 import {isScalar} from "../scalar-managment/manage-scalars";
-import {OneToOneRelationNotAllowed} from "./error/one-to-one-not-allowed";
-import util from "util";
+import {OneToOneRelationNotAllowedError} from "./error/one-to-one-not-allowed";
 
 /**
  *  Compute relationships oneToMany, manyToMany, etc..
@@ -16,6 +15,7 @@ export const getRelations = (types: Type[]) => {
     let manyToMany: any[] = [];
     let targetSQLTypeName: string;
     let currentSQLTypeName: string;
+    let targetType: Type | undefined;
     types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
         .forEach(currentType => {
             let relationalFields = getRelationalFields(currentType.fields);
@@ -62,12 +62,11 @@ export const getRelations = (types: Type[]) => {
                                 constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                             };
                         } else {
-                            //TODO Management of oneToOne relations
                             let targetedType = types.find(type => type.typeName === relationalField.type)
                             let targetField = targetedType?.fields.find(field => field.type === currentType.typeName)
 
                             if (targetField?.noNull && relationalField.noNull) {
-                                throw new OneToOneRelationNotAllowed()
+                                throw new OneToOneRelationNotAllowedError()
                             }
 
                             currentType.relationList.push({
@@ -154,7 +153,7 @@ export const getRelations = (types: Type[]) => {
                         addedForeignKeyField.delegated_field.associatedWith.fieldName = relationalField.name;
 
 
-                        let targetType = types.find(type => type.typeName === relationalField.type)
+                        targetType = types.find(type => type.typeName === relationalField.type)
                         targetType?.fields.push(addedForeignKeyField);
                         break;
                     /** ManyToOne **/
@@ -197,7 +196,7 @@ export const getRelations = (types: Type[]) => {
 
                             relationalField.relationType = Relationships.manyToMany;
 
-                            let targetType = types.find(type => type.typeName === relationalField.type);
+                            targetType = types.find(type => type.typeName === relationalField.type);
                             let targetField = targetType?.fields.find(field => field.type === currentType.typeName);
 
                             // If the joinTable exists from the other entity we don't need to create a new one
@@ -230,8 +229,6 @@ export const getRelations = (types: Type[]) => {
                 }
             })
         })
-    console.log(manyToMany)
-    console.log(util.inspect(types, false, null, true))
     return types
 }
 
@@ -267,7 +264,7 @@ export const getJoinTables = (types: IType[]) => {
                     ]
                 })
             })
-            rfields.filter(field => (field.relationType == Relationships.manyToMany && field.activeSide == true) || field.relationType == Relationships.manyToOne && field.joinTable.state).forEach(rfield => {
+            rfields.filter(field => (field.relationType == Relationships.manyToMany && field.activeSide) || field.relationType == Relationships.manyToOne && field.joinTable.state).forEach(rfield => {
                 let elt0 = getSQLTableName(type.typeName)
                 let elt1 = getSQLTableName(rfield.type.toLowerCase())
                 result.push({
@@ -307,6 +304,7 @@ export const getQuerySelfJoinMany = (currentTypeName, fields) => {
     fields.forEach(field => {
         if (field.type === currentTypeName) {
             result += "SELECT t2.* FROM \"" + currentTypeName + "\" as t1 LEFT OUTER JOIN \"" + currentTypeName + "_" + field.name.toLowerCase() + "\" as joint ON t1.\"Pk_" + currentTypeName + "_id\" = joint.\"" + currentTypeName.toLowerCase() + "_id\" LEFT OUTER JOIN \"" + currentTypeName + "\" as t2 ON joint." + field.name.toLowerCase() + "_id = t2.\"Pk_" + currentTypeName + "_id\" WHERE t1.\"Pk_" + currentTypeName + "_id\" = :value '+sorting+' '+limit+' '+offset"
+            // result += `SELECT t2.* FROM "${currentTypeName}" as t1 LEFT OUTER JOIN "${currentTypeName}_${field.name.toLowerCase()}" as joint ON t1."Pk_${currentTypeName}_id" = joint."${currentTypeName.to}_id" LEFT OUTER JOIN "${currentTypeName}" as t2 ON joint.${field.name.toLowerCase()}_id = t2."Pk_${currentTypeName}_id" WHERE t1."Pk_${currentTypeName}_id" = :value`
         }
     })
     return result
@@ -314,14 +312,14 @@ export const getQuerySelfJoinMany = (currentTypeName, fields) => {
 
 /** Fonctions utilitaires */
 
-const getRelationalFields = (fields: IField[]) => {
+const getRelationalFields = (fields: Field[]) => {
     return fields.filter(field => !isScalar(field.type))
 }
 
 /**
  *
  * @param {*} fields Fields of the targeted object
- * @param {*} currentType Type being inspected
+ * @param {*} currentTypeName TypeName being inspected
  * @returns 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
  * @description Doesn't work if there is several time the same type referenced in the fileds !
  */
@@ -338,7 +336,6 @@ const getManyOrOne = (fields: IField[], currentTypeName: string) => {
  *
  * @param {*} targetTypeName : Target type for the relation
  * @param {*} types : Types defined in the schema
- * @param {*} typeNames : Typenames defined in the schema
  * @param {*} currentTypeName : Current Type being processed
  * @returns : 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
  */
@@ -349,4 +346,4 @@ const getRelationOf = (targetTypeName: string, types: IType[], currentTypeName: 
         }
     }
     return 0;
-}
+};

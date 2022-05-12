@@ -1,8 +1,8 @@
 type Movie {
     id: ID!
-    oscars: [Oscar]
+    characters: [Actor]
 }
 
-type Oscar {
+type Actor {
     id: ID!
 }

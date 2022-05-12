@@ -1,0 +1,54 @@
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Movie",
+    "sqlTypeName": "movie",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "teaser",
+        "type": "Movie",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": false,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": {
+          "name": "Fk_teaser_movie_id",
+          "type": "int",
+          "noNull": false,
+          "isArray": false,
+          "isForeignKey": true,
+          "constraint": "FOREIGN KEY (\"Fk_teaser_movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+        },
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": null,
+          "associatedWith": {
+            "type": null,
+            "fieldName": null
+          }
+        },
+        "in_model": true,
+        "joinTable": {
+          "state": false,
+          "name": null,
+          "contains": []
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "selfJoinOne"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Movie",
+        "relation": "selfJoinOne"
+      }
+    ]
+  }
+]

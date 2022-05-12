@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {IField} from "../models/field";
+import {Field} from "../models/field";
 import {hasFieldType, isSchemaValid, Type} from "../index";
 
 export const typesGenerator = (schemaJSON) => {
@@ -8,7 +8,7 @@ export const typesGenerator = (schemaJSON) => {
     let isValidSchema = isSchemaValid(types)
     if (!isValidSchema.response) {
         if (isValidSchema.reason === "Missing required id field of type ID in one or multiple Entity") {
-            let idField: IField = JSON.parse(fs.readFileSync(
+            let idField: Field = JSON.parse(fs.readFileSync(
                 path.join(__dirname, 'id-field.json'),
                 'utf8'
             ));

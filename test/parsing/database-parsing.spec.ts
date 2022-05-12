@@ -9,16 +9,13 @@ import {
     Type
 } from "../../lib";
 import {expect} from "chai";
-import {IType} from "../../lib/models/type";
 
 describe('database-parsing methods', function () {
 
-    const env = {"error": (str) => console.error(str)};
-
-    const generateTypeWithRelations = (schema): IType[] => {
+    const generateTypeWithRelations = (schema): Type[] => {
         let types = Type.initTypes(schemaParser(schema))
         let entityTypes = types.filter(type => type.type === "ObjectTypeDefinition")
-        return getRelations(entityTypes, env)
+        return getRelations(entityTypes)
     }
 
     describe('getAllTables method', function () {
