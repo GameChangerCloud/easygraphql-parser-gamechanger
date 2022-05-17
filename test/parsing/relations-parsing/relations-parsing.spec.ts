@@ -1,18 +1,20 @@
 import fs from "fs";
 import path from "path";
 import {expect} from "chai";
-import util from "util";
-import {getJoinTables, getQuerySelfJoinMany, getQuerySelfJoinOne, Type} from "../../../lib";
+import {getJoinTables, getQuerySelfJoinMany, getQuerySelfJoinOne, getRelations, schemaParser, Type} from "../../../lib";
 
 describe('relations parsing', () => {
     describe('getJoinTables', () => {
         it('Should return all relations selfJoinMany, manyToMany and manyToOne from the type', () => {
             //GIVEN
-            let types: Type[];
-            types = JSON.parse(fs.readFileSync(
-                path.join(__dirname, "../../resources/parsing/relations-parsing/types.json"),
+            let schema = fs.readFileSync(
+                path.join(__dirname, "../../resources/parsing/relations-parsing/types.graphql"),
                 'utf8'
-            ));
+            );
+            let schemaJson = schemaParser(schema)
+            let types = Type.initTypes(schemaJson)
+            types = getRelations(types)
+
             //WHEN
             const joinTables = getJoinTables(types)
             console.log(joinTables)
