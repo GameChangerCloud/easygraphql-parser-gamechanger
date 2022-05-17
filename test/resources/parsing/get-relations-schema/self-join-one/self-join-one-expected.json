@@ -19,7 +19,6 @@
           "name": "Fk_teaser_movie_id",
           "type": "int",
           "noNull": false,
-          "isArray": false,
           "isForeignKey": true,
           "constraint": "FOREIGN KEY (\"Fk_teaser_movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
         },

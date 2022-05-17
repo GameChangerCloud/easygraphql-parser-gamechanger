@@ -63,7 +63,6 @@
           "name": "Fk_movie_movie_id",
           "type": "int",
           "noNull": true,
-          "isArray": false,
           "isForeignKey": true,
           "constraint": "FOREIGN KEY (\"Fk_movie_movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
         },

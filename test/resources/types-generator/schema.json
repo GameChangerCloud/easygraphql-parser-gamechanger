@@ -60,7 +60,7 @@
           "contains": []
         },
         "oneToOneInfo": null,
-        "sqlType": "int"
+        "sqlType": "text"
       }
     ],
     "implementedTypes": [],

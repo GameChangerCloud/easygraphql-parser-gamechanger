@@ -19,7 +19,6 @@
           "name": "Fk_people_actor_id",
           "type": "int",
           "noNull": true,
-          "isArray": false,
           "isForeignKey": true,
           "constraint": "FOREIGN KEY (\"Fk_people_id\") REFERENCES \"actor\""
         },
