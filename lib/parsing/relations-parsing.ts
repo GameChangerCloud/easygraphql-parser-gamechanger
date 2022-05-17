@@ -37,7 +37,6 @@ export const getRelations = (types: Type[]) => {
                             name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
                             type: "int",
                             noNull: relationalField.noNull,
-                            isArray: relationalField.isArray,
                             isForeignKey: true,
                             constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                         };
@@ -57,7 +56,6 @@ export const getRelations = (types: Type[]) => {
                                 name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
                                 type: "int",
                                 noNull: relationalField.noNull,
-                                isArray: relationalField.isArray,
                                 isForeignKey: true,
                                 constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                             };
@@ -82,7 +80,6 @@ export const getRelations = (types: Type[]) => {
                                     name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
                                     type: "int",
                                     noNull: relationalField.noNull,
-                                    isArray: relationalField.isArray,
                                     isForeignKey: true,
                                     constraint: `FOREIGN KEY ("Fk_${relationalField.name}_id") REFERENCES "${targetSQLTypeName}"`
                                 }
@@ -104,7 +101,6 @@ export const getRelations = (types: Type[]) => {
                             name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
                             type: "int",
                             noNull: relationalField.noNull,
-                            isArray: relationalField.isArray,
                             isForeignKey: true,
                             constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                         };
@@ -142,7 +138,6 @@ export const getRelations = (types: Type[]) => {
                             name: `Fk_${relationalField.name}_${currentSQLTypeName}_id`,
                             type: "int",
                             noNull: relationalField.noNullArrayValues,
-                            isArray: false,
                             isForeignKey: true,
                             constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${currentSQLTypeName}_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
                         }

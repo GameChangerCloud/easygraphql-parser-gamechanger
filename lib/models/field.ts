@@ -1,6 +1,5 @@
 import {Relationships} from "../constants/relationships";
 import {Scalars} from "../constants/scalar";
-import {SQLTypeNotSupported} from "../parsing/error/sql-type-not-supported";
 
 export interface IField {
     name: string;
@@ -103,6 +102,7 @@ export class Field {
 const getSQLType = (fieldType: string) => {
     switch (fieldType) {
         case "ID":
+        case "Int":
         case Scalars.UtcOffset:
         case Scalars.EmailAddress:
         case Scalars.URL:
@@ -122,8 +122,6 @@ const getSQLType = (fieldType: string) => {
         case Scalars.ISBN:
         case Scalars.RGBA:
             return "text"
-        case "Int":
-            return "int"
         case "Boolean":
             return "boolean"
         case "Float":
