@@ -163,6 +163,6 @@ const getSQLType = (fieldType: string) => {
         case Scalars.Polygon:
             return "geometry"
         default:
-            throw new SQLTypeNotSupported(fieldType)
+            return "int"
     }
 }
