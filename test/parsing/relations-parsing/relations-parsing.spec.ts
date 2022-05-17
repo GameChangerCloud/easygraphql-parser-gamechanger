@@ -1,24 +1,21 @@
 import fs from "fs";
 import path from "path";
-import {
-    getJoinTables,
-    getQuerySelfJoinMany,
-    getQuerySelfJoinOne,
-} from "../../../lib";
 import {expect} from "chai";
 import util from "util";
+import {getJoinTables, getQuerySelfJoinMany, getQuerySelfJoinOne, Type} from "../../../lib";
 
 describe('relations parsing', () => {
     describe('getJoinTables', () => {
         it('Should return all relations selfJoinMany, manyToMany and manyToOne from the type', () => {
             //GIVEN
-            let types;
+            let types: Type[];
             types = JSON.parse(fs.readFileSync(
                 path.join(__dirname, "../../resources/parsing/relations-parsing/types.json"),
                 'utf8'
             ));
             //WHEN
             const joinTables = getJoinTables(types)
+            console.log(joinTables)
             const expectedTypes = JSON.parse(fs.readFileSync(
                 path.join(__dirname, "../../resources/parsing/relations-parsing/expected-table.json"),
                 'utf8'

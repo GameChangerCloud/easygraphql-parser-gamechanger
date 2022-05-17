@@ -1,7 +1,7 @@
 /** Fonctions principales */
 import {Relationships} from "../constants/relationships";
 import {getSQLTableName} from "../utils/get-sql-table-name";
-import {IType, Type} from "../models/type";
+import {Type} from "../models/type";
 import {Field, IField} from "../models/field";
 import {isScalar} from "../scalar-managment/manage-scalars";
 import {OneToOneRelationNotAllowedError} from "./error/one-to-one-not-allowed";
@@ -18,7 +18,7 @@ export const getRelations = (types: Type[]) => {
     let targetType: Type | undefined;
     types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
         .forEach(currentType => {
-            let relationalFields = getRelationalFields(currentType.fields);
+            let relationalFields = currentType.fields.filter(field => !isScalar(field.type))
             relationalFields.forEach(relationalField => {
                 let inn = relationalField.isArray ? 2 : 1;
                 let out = getRelationOf(relationalField.type, types, currentType.typeName);
@@ -238,52 +238,28 @@ export const getRelations = (types: Type[]) => {
  * @returns Tables description
  * @param types
  */
-export const getJoinTables = (types: IType[]) => {
+export const getJoinTables = (types: Type[]) => {
     let result: any = []
 
-    types.forEach(type => {
-        if (type.typeName != "Query" && type.typeName != "Mutation" && type.typeName != "Subscription") {
-            let rfields = getRelationalFields(type.fields)
-            rfields.filter(field => field.relationType == Relationships.selfJoinMany).forEach(rfield => {
-                let elt0 = getSQLTableName(type.typeName)
-                let elt1 = getSQLTableName(rfield.type.toLowerCase())
-                result.push({
-                    name: type.typeName + "_" + rfield.type.toLowerCase() + "_" + rfield.name,
-                    sqlname: elt0 + "_" + elt1 + "_" + rfield.name.toLowerCase(),
-                    isJoinTable: true,
-                    columns: [
-                        {
-                            field: elt0 + '_id',
-                            fieldType: 'INTEGER',
-                            constraint: 'FOREIGN KEY ("' + elt0 + '_id") REFERENCES "' + elt0 + '"("Pk_' + elt0 + '_id")'
-                        }, {
-                            field: rfield.name + '_id',
-                            fieldType: 'INTEGER',
-                            constraint: 'FOREIGN KEY ("' + rfield.name.toLowerCase() + '_id") REFERENCES "' + elt0 + '"("Pk_' + elt0 + '_id")'
-                        },
-                    ]
+    types.forEach(currentType => {
+        if (currentType.isNotOperation()) {
+            currentType.fields.filter(field => field.relationType == Relationships.selfJoinMany || field.relationType == Relationships.manyToMany && field.joinTable.state)
+                .forEach(relationalField => {
+                    let joinTableColumns = relationalField.joinTable.contains.map(column => {
+                        return {
+                            field: column.fieldName,
+                            fieldType: 'int',
+                            constraint: column.constraint
+                        }
+                    });
+
+                    result.push({
+                        name: relationalField.joinTable.name,
+                        sqlName: getSQLTableName(relationalField.joinTable.name),
+                        columns: joinTableColumns,
+                        isJoinTable: true
+                    })
                 })
-            })
-            rfields.filter(field => (field.relationType == Relationships.manyToMany && field.activeSide) || field.relationType == Relationships.manyToOne && field.joinTable.state).forEach(rfield => {
-                let elt0 = getSQLTableName(type.typeName)
-                let elt1 = getSQLTableName(rfield.type.toLowerCase())
-                result.push({
-                    name: type.typeName + "_" + rfield.type.toLowerCase() + "_" + rfield.name,
-                    sqlname: elt0 + "_" + elt1 + "_" + rfield.name.toLowerCase(),
-                    isJoinTable: true,
-                    columns: [
-                        {
-                            field: elt0 + '_id',
-                            fieldType: 'INTEGER',
-                            constraint: 'FOREIGN KEY ("' + elt0 + '_id") REFERENCES "' + elt0 + '"("Pk_' + elt0 + '_id")'
-                        }, {
-                            field: rfield.name + '_id',
-                            fieldType: 'INTEGER',
-                            constraint: 'FOREIGN KEY ("' + rfield.name.toLowerCase() + '_id") REFERENCES "' + elt1 + '"("Pk_' + elt1 + '_id")'
-                        },
-                    ]
-                })
-            })
         }
     })
     return result
@@ -312,10 +288,6 @@ export const getQuerySelfJoinMany = (currentTypeName, fields) => {
 
 /** Fonctions utilitaires */
 
-const getRelationalFields = (fields: Field[]) => {
-    return fields.filter(field => !isScalar(field.type))
-}
-
 /**
  *
  * @param {*} fields Fields of the targeted object
@@ -339,7 +311,7 @@ const getManyOrOne = (fields: IField[], currentTypeName: string) => {
  * @param {*} currentTypeName : Current Type being processed
  * @returns : 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
  */
-const getRelationOf = (targetTypeName: string, types: IType[], currentTypeName: string) => {
+const getRelationOf = (targetTypeName: string, types: Type[], currentTypeName: string) => {
     for (let type of types) {
         if (type.typeName === targetTypeName) {
             return getManyOrOne(type.fields, currentTypeName)
