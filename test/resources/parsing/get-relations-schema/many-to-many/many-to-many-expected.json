@@ -83,9 +83,20 @@
         },
         "in_model": false,
         "joinTable": {
-          "state": false,
-          "name": null,
-          "contains": []
+          "state": true,
+          "name": "Movie_Actor_actors",
+          "contains": [
+            {
+              "fieldName": "actor_id",
+              "type": "Actor",
+              "constraint": "FOREIGN KEY (\"actor_id\") REFERENCES \"actor\" (\"Pk_actor_id\")"
+            },
+            {
+              "fieldName": "movie_id",
+              "type": "Movie",
+              "constraint": "FOREIGN KEY (\"movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+            }
+          ]
         },
         "oneToOneInfo": null,
         "sqlType": "int",

@@ -17,7 +17,6 @@ describe('relations parsing', () => {
 
             //WHEN
             const joinTables = getJoinTables(types)
-            console.log(joinTables)
             const expectedTypes = JSON.parse(fs.readFileSync(
                 path.join(__dirname, "../../resources/parsing/relations-parsing/expected-table.json"),
                 'utf8'

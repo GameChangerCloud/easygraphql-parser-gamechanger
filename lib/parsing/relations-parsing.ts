@@ -196,7 +196,9 @@ export const getRelations = (types: Type[]) => {
 
                             // If the joinTable exists from the other entity we don't need to create a new one
                             let alreadyDefinedRelation = manyToMany.filter(relation => relation.field === targetField?.name && relationalField.name === relation.target)
-                            if (!alreadyDefinedRelation[0]) {
+                            if (alreadyDefinedRelation[0]) {
+                                relationalField.joinTable = targetField?.joinTable;
+                            } else {
                                 let jointTableName = `${currentType.typeName}_${relationalField.type}_${relationalField.name}`
                                 manyToMany.push({
                                     name: jointTableName,
@@ -234,12 +236,17 @@ export const getRelations = (types: Type[]) => {
  * @param types
  */
 export const getJoinTables = (types: Type[]) => {
-    let result: any = []
+    let results: any = []
 
     types.forEach(currentType => {
         if (currentType.isNotOperation()) {
             currentType.fields.filter(field => field.relationType == Relationships.selfJoinMany || field.relationType == Relationships.manyToMany && field.joinTable.state)
                 .forEach(relationalField => {
+                    //Check if jointable already existing
+                    let alreadyExisting = results.filter(result => result.name === relationalField.joinTable.name)
+                    if (alreadyExisting[0]) {
+                        return
+                    }
                     let joinTableColumns = relationalField.joinTable.contains.map(column => {
                         return {
                             field: column.fieldName,
@@ -248,16 +255,16 @@ export const getJoinTables = (types: Type[]) => {
                         }
                     });
 
-                    result.push({
+                    results.push({
                         name: relationalField.joinTable.name,
-                        sqlName: getSQLTableName(relationalField.joinTable.name),
+                        sqlName: relationalField.joinTable.name.toLowerCase(),
                         columns: joinTableColumns,
                         isJoinTable: true
                     })
                 })
         }
     })
-    return result
+    return results
 }
 
 export const getQuerySelfJoinOne = (currentTypeName, fields) => {
@@ -275,7 +282,6 @@ export const getQuerySelfJoinMany = (currentTypeName, fields) => {
     fields.forEach(field => {
         if (field.type === currentTypeName) {
             result += "SELECT t2.* FROM \"" + currentTypeName + "\" as t1 LEFT OUTER JOIN \"" + currentTypeName + "_" + field.name.toLowerCase() + "\" as joint ON t1.\"Pk_" + currentTypeName + "_id\" = joint.\"" + currentTypeName.toLowerCase() + "_id\" LEFT OUTER JOIN \"" + currentTypeName + "\" as t2 ON joint." + field.name.toLowerCase() + "_id = t2.\"Pk_" + currentTypeName + "_id\" WHERE t1.\"Pk_" + currentTypeName + "_id\" = :value '+sorting+' '+limit+' '+offset"
-            // result += `SELECT t2.* FROM "${currentTypeName}" as t1 LEFT OUTER JOIN "${currentTypeName}_${field.name.toLowerCase()}" as joint ON t1."Pk_${currentTypeName}_id" = joint."${currentTypeName.to}_id" LEFT OUTER JOIN "${currentTypeName}" as t2 ON joint.${field.name.toLowerCase()}_id = t2."Pk_${currentTypeName}_id" WHERE t1."Pk_${currentTypeName}_id" = :value`
         }
     })
     return result

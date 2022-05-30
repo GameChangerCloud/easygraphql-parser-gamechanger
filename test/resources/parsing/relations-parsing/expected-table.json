@@ -14,6 +14,6 @@
     ],
     "isJoinTable": true,
     "name": "Movie_Actor_actors",
-    "sqlName": "movie__actor_actors"
+    "sqlName": "movie_actor_actors"
   }
 ]
