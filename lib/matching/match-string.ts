@@ -81,6 +81,13 @@ function isUrl(s: string) {
     return (s.toLowerCase().includes("url")
         || s.toLowerCase().includes("link"));
 }
+
+function isAvatar(s: string) {
+    return s.toLowerCase().includes("avatar")
+        || s.toLowerCase().includes("profile")
+        || s.toLowerCase().includes("image")
+        || s.toLowerCase().includes("picture");
+}
 function isPassword(s: string) {
     return (s.toLowerCase().includes("password")
         || s.toLowerCase().includes("pwd"));
@@ -196,6 +203,11 @@ export function matchString(s: string) {
     if (isUrl(s)) {
         return 'chance.url()';
     }
+
+    if (isAvatar(s)) {
+        return 'chance.avatar()'
+    }
+
     // if(isPassword(s)){
     //     return 'chance.internet.password()'
     // }
