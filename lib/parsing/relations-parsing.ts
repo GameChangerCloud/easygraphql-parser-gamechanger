@@ -157,6 +157,10 @@ export const getRelations = (types: Type[]) => {
                             type: relationalField.type,
                             relation: Relationships.manyToOne
                         });
+
+                        relationalField.relation = true;
+                        relationalField.relationType = Relationships.manyToOne;
+                        relationalField.in_model = false;
                         break;
                     /** ManyToMany | SelfJoinMany **/
                     case inn === 2 && out === 2:
