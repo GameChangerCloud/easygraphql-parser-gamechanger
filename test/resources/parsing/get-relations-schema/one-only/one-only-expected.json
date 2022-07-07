@@ -1,0 +1,63 @@
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Movie",
+    "sqlTypeName": "movie",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "people",
+        "type": "Actor",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": false,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": {
+          "name": "Fk_people_actor_id",
+          "type": "int",
+          "noNull": false,
+          "isForeignKey": true,
+          "constraint": "FOREIGN KEY (\"Fk_people_actor_id\") REFERENCES \"actor\" (\"Pk_actor_id\")"
+        },
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": null,
+          "associatedWith": {
+            "type": null,
+            "fieldName": null
+          }
+        },
+        "in_model": true,
+        "joinTable": {
+          "state": false,
+          "name": null,
+          "contains": []
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "oneOnly"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Actor",
+        "relation": "oneOnly"
+      }
+    ]
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Actor",
+    "sqlTypeName": "actor",
+    "description": "",
+    "directives": [],
+    "fields": [],
+    "implementedTypes": [],
+    "relationList": []
+  }
+]

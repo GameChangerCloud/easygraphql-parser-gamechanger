@@ -9,7 +9,7 @@ export interface IType {
     description: string;
     directives: any[];
     relationList: any[];
-    fields: IField[];
+    fields: Field[];
     implementedTypes: any;
 }
 
@@ -20,7 +20,7 @@ export class Type {
     description: string;
     directives: any[];
     relationList: any[];
-    fields: IField[];
+    fields: Field[];
     implementedTypes: any;
 
     constructor(type: string, typeName: string, sqlTypeName: string, description: string, directives: any[], implementedTypes: any[],) {

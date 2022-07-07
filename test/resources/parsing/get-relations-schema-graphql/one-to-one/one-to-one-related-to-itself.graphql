@@ -1,4 +1,0 @@
-type Movie {
-    id: ID
-    teaser: Movie
-}

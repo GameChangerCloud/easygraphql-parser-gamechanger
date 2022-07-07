@@ -19,3 +19,4 @@ type Actor {
 type Studio {
   id: ID!
   name: String!
+}

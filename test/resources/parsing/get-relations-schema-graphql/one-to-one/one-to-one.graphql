@@ -1,9 +1,0 @@
-type Movie {
-    id: ID
-    abstract: Abstract
-}
-
-type Abstract {
-    id: ID
-    movie: Movie!
-}

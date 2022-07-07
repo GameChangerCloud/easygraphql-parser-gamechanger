@@ -1,8 +1,8 @@
 type Movie {
     id: ID!
-    studio: Studio
+    people: Actor
 }
 
-type Studio {
+type Actor {
     id: ID!
 }

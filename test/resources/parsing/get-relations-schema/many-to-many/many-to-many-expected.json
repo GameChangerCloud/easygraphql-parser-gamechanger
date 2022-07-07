@@ -1,0 +1,114 @@
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Movie",
+    "sqlTypeName": "movie",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "actors",
+        "type": "Actor",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": true,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": null,
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": null,
+          "associatedWith": {
+            "type": null,
+            "fieldName": null
+          }
+        },
+        "in_model": false,
+        "joinTable": {
+          "state": true,
+          "name": "Movie_Actor_actors",
+          "contains": [
+            {
+              "fieldName": "actor_id",
+              "type": "Actor",
+              "constraint": "FOREIGN KEY (\"actor_id\") REFERENCES \"actor\" (\"Pk_actor_id\")"
+            },
+            {
+              "fieldName": "movie_id",
+              "type": "Movie",
+              "constraint": "FOREIGN KEY (\"movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+            }
+          ]
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "manyToMany"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Actor",
+        "relation": "manyToMany"
+      }
+    ]
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Actor",
+    "sqlTypeName": "actor",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "movies",
+        "type": "Movie",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": true,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": null,
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": null,
+          "associatedWith": {
+            "type": null,
+            "fieldName": null
+          }
+        },
+        "in_model": false,
+        "joinTable": {
+          "state": true,
+          "name": "Movie_Actor_actors",
+          "contains": [
+            {
+              "fieldName": "actor_id",
+              "type": "Actor",
+              "constraint": "FOREIGN KEY (\"actor_id\") REFERENCES \"actor\" (\"Pk_actor_id\")"
+            },
+            {
+              "fieldName": "movie_id",
+              "type": "Movie",
+              "constraint": "FOREIGN KEY (\"movie_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+            }
+          ]
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "manyToMany"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Movie",
+        "relation": "manyToMany"
+      }
+    ]
+  }
+]

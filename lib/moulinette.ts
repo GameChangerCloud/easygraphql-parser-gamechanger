@@ -40,7 +40,7 @@ fs.readdirSync(RESOURCE_FOLDER).forEach(file => {
         JSON.stringify(types)
     );
 
-    relations = getRelations(types,{"error": (str) => console.error(str)});
+    relations = getRelations(types);
 
     fs.writeFileSync(
         path.join(__dirname, RELATIONS_FOLDER, file.replace(".graphql", "") + "-relations.json"),
