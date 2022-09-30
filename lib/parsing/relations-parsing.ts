@@ -148,8 +148,8 @@ export const getRelations = (types: Type[]) => {
                         addedForeignKeyField.delegated_field.associatedWith.fieldName = relationalField.name;
 
 
-                        targetType = types.find(type => type.typeName === relationalField.type)
-                        targetType?.fields.push(addedForeignKeyField);
+                        //targetType = types.find(type => type.typeName === relationalField.type)
+                        //targetType?.fields.push(addedForeignKeyField);
                         break;
                     /** ManyToOne **/
                     case inn === 2 && out === 1:
