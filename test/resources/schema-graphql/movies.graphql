@@ -2,7 +2,7 @@ scalar RGBA
 
 type Movie {
   id: ID
-  title: String 
+  title: String
   poster: String
   actors: [Actor] @hasInverse(field: movies)
   studio: Studio!
@@ -16,8 +16,8 @@ type Actor {
   name: String
   movies: [Movie] @hasInverse(field: actors)
   likes: [Movie]
-  hates : [Movie]
-  children : [Actor]
+  hates: [Movie]
+  children: [Actor]
 }
 
 type Oscar {
@@ -32,7 +32,7 @@ type Studio {
 }
 
 type Synopsis {
-	id: ID
+  id: ID
   text: String!
   bgcolor: RGBA
 }
