@@ -1,7 +1,7 @@
 scalar RGB
 
 type Query {
-    getNames: [String]
-    getColor: RGB
-    person: Person
+  getNames: [String]
+  getColor: RGB
+  person: Person
 }

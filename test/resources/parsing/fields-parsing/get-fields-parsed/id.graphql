@@ -1,11 +1,11 @@
 type Person {
-    id: ID!
+  id: ID!
 }
 
 type Mutation {
-    id(id: ID!): ID!
+  id(id: ID!): ID!
 }
 
 type Query {
-    getId: ID!
+  getId: ID!
 }

@@ -37,7 +37,8 @@ export class Field {
     isDeprecated: boolean;
     joinTable: any;
     sqlType: string;
-    activeSide?: boolean
+    activeSide?: boolean;
+
 
     constructor(
         name: string,

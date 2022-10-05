@@ -1,11 +1,11 @@
 type Person {
-    age: Int!
+  age: Int!
 }
 
 type Mutation {
-    age(age: Int!): Int!
+  age(age: Int!): Int!
 }
 
 type Query {
-    getAge: Int!
+  getAge: Int!
 }

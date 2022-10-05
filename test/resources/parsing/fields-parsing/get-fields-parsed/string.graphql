@@ -1,11 +1,11 @@
 type Person {
-    name: String!
+  name: String!
 }
 
 type Mutation {
-    name(name: String!): String!
+  name(name: String!): String!
 }
 
 type Query {
-    getName: String!
+  getName: String!
 }

@@ -1,10 +1,10 @@
 /** Fonctions principales */
-import {Relationships} from "../constants/relationships";
-import {getSQLTableName} from "../utils/get-sql-table-name";
-import {Type} from "../models/type";
-import {Field, IField} from "../models/field";
-import {isScalar} from "../scalar-managment/manage-scalars";
-import {OneToOneRelationNotAllowedError} from "./error/one-to-one-not-allowed";
+import { Relationships } from "../constants/relationships";
+import { getSQLTableName } from "../utils/get-sql-table-name";
+import { Type } from "../models/type";
+import { Field, IField } from "../models/field";
+import { isScalar } from "../scalar-managment/manage-scalars";
+import { OneToOneRelationNotAllowedError } from "./error/one-to-one-not-allowed";
 
 /**
  *  Compute relationships oneToMany, manyToMany, etc..
@@ -15,10 +15,11 @@ export const getRelations = (types: Type[]) => {
     let manyToMany: any[] = [];
     let targetSQLTypeName: string;
     let currentSQLTypeName: string;
+    let relatedFieldName: string | undefined;
     let targetType: Type | undefined;
     types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
         .forEach(currentType => {
-            let relationalFields = currentType.fields.filter(field => !isScalar(field.type))
+            let relationalFields = currentType.fields.filter(field => !isScalar(field.type));
             relationalFields.forEach(relationalField => {
                 let inn = relationalField.isArray ? 2 : 1;
                 let out = getRelationOf(relationalField.type, types, currentType.typeName);
@@ -89,9 +90,11 @@ export const getRelations = (types: Type[]) => {
                         break;
                     /** OneToMany relationships **/
                     case inn === 1 && out === 2:
+                        relatedFieldName = getRelatedFieldName(currentType.typeName, types, relationalField.type);
                         currentType.relationList.push({
                             type: relationalField.type,
-                            relation: Relationships.oneToMany
+                            relation: Relationships.oneToMany,
+                            relatedFieldName,
                         });
 
                         targetSQLTypeName = getSQLTableName(relationalField.type)
@@ -151,11 +154,14 @@ export const getRelations = (types: Type[]) => {
                         //targetType = types.find(type => type.typeName === relationalField.type)
                         //targetType?.fields.push(addedForeignKeyField);
                         break;
+
                     /** ManyToOne **/
                     case inn === 2 && out === 1:
+                        relatedFieldName = getRelatedFieldName(currentType.typeName, types, relationalField.type);
                         currentType.relationList.push({
                             type: relationalField.type,
-                            relation: Relationships.manyToOne
+                            relation: Relationships.manyToOne,
+                            relatedFieldName,
                         });
 
                         relationalField.relation = true;
@@ -225,7 +231,7 @@ export const getRelations = (types: Type[]) => {
                             }
                         }
                         relationalField.relation = true;
-                        relationalField.in_model = false
+                        relationalField.in_model = false;
                         break;
                 }
             })
@@ -323,4 +329,17 @@ const getRelationOf = (targetTypeName: string, types: Type[], currentTypeName: s
         }
     }
     return 0;
+};
+
+/**
+ *
+ * @param {*} targetTypeName : Target type for the relation
+ * @param {*} types : Types defined in the schema
+ * @param {*} currentTypeName : Current Type being processed
+ * @returns : 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
+ */
+const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFieldType: string) => {
+    const relatedType = types.find(type => type.typeName === relatedFieldType);
+    const relatedField = relatedType?.fields.find(field => field.type.toLowerCase().includes(currentTypeName.toLowerCase()));
+    return (relatedField?.name);
 };

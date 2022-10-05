@@ -39,73 +39,73 @@ scalar ISBN
 scalar RGBA
 
 type Movie {
-    id: ID!
-    name: String
-    viewers: Int
-    french: Boolean
-    value: Float
-    trailers: [URL]
-    duration: Time
-    launchDate: Date
-    studio: Studio!
-    ipv4: IPv4
-    ipv6: IPv6
-    mac: MAC
-    usCurrency: USCurrency
-    currency: Currency
-    json: JSON
-    jsonObject: JSONObject
-    byte: Byte
-    lineString: LineString
-    point: Point
-    polygon: Polygon
-    utcOffset: UtcOffset
-    emailAddress: EmailAddress
-    phoneNumber: PhoneNumber
-    postalCode: PostalCode
-    hexColorCode: HexColorCode
-    hsl: HSL
-    hsla: HSLA
-    nonPositiveInt: NonPositiveInt
-    positiveInt: PositiveInt
-    nonNegativeInt: NonNegativeInt
-    negativeInt: NegativeInt
-    unsignedInt: UnsignedInt
-    rgb: RGB
-    isbn: ISBN
-    rgba: RGBA
+  id: ID!
+  name: String
+  viewers: Int
+  french: Boolean
+  value: Float
+  trailers: [URL]
+  duration: Time
+  launchDate: Date
+  studio: Studio!
+  ipv4: IPv4
+  ipv6: IPv6
+  mac: MAC
+  usCurrency: USCurrency
+  currency: Currency
+  json: JSON
+  jsonObject: JSONObject
+  byte: Byte
+  lineString: LineString
+  point: Point
+  polygon: Polygon
+  utcOffset: UtcOffset
+  emailAddress: EmailAddress
+  phoneNumber: PhoneNumber
+  postalCode: PostalCode
+  hexColorCode: HexColorCode
+  hsl: HSL
+  hsla: HSLA
+  nonPositiveInt: NonPositiveInt
+  positiveInt: PositiveInt
+  nonNegativeInt: NonNegativeInt
+  negativeInt: NegativeInt
+  unsignedInt: UnsignedInt
+  rgb: RGB
+  isbn: ISBN
+  rgba: RGBA
 }
 
 type Actor {
-    id: ID!
-    name: String
-    movies: [Movie]
-    paymentDate: DateTime
-    nonPositiveFloat: NonPositiveFloat
-    positiveFloat: PositiveFloat
-    nonNegativeFloat: NonNegativeFloat
-    negativeFloat: NegativeFloat
-    unsignedFloat: UnsignedFloat
+  id: ID!
+  name: String
+  movies: [Movie]
+  paymentDate: DateTime
+  nonPositiveFloat: NonPositiveFloat
+  positiveFloat: PositiveFloat
+  nonNegativeFloat: NonNegativeFloat
+  negativeFloat: NegativeFloat
+  unsignedFloat: UnsignedFloat
 }
 
 type Studio {
-    id: ID!
-    name: String!
-    rent: BigInt
-    long: Long
-    port: Port
-    guid: GUID
+  id: ID!
+  name: String!
+  rent: BigInt
+  long: Long
+  port: Port
+  guid: GUID
 }
 
 type Query {
-    movies: [Movie]
+  movies: [Movie]
 }
 
 extend type Mutation {
-    createActor(input: CreateActorInput!): Actor!
+  createActor(input: CreateActorInput!): Actor!
 }
 
 input CreateActorInput {
-    name: String!
-    description: String!
+  name: String!
+  description: String!
 }

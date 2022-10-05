@@ -1,9 +1,9 @@
 type Movie {
-    id: ID!
-    actors: [Actor]
+  id: ID!
+  actors: [Actor]
 }
 
 type Actor {
-    id: ID!
-    movie: Movie!
+  id: ID!
+  movie: Movie!
 }
