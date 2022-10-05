@@ -1,4 +1,4 @@
 type Movie {
-    id: ID!
-    teaser: Movie
+  id: ID!
+  teaser: Movie
 }

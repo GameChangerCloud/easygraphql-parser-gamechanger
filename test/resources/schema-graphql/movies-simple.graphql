@@ -11,9 +11,7 @@ type Actor {
   movies: [Movie]
 }
 
-
 type Studio {
   id: ID
   name: String!
 }
-

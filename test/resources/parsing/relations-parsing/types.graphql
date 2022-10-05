@@ -2,36 +2,36 @@ scalar URL
 scalar Date
 
 type Movie {
-    id: ID!
-    trailers: [URL]
-    launchDate: Date
-    title: String @search
-    actors: [Actor] @hasInverse(field: movies)
-    studio: Studio!
+  id: ID!
+  trailers: [URL]
+  launchDate: Date
+  title: String @search
+  actors: [Actor] @hasInverse(field: movies)
+  studio: Studio!
 }
 
 type Actor {
-    id: ID!
-    name: String
-    movies: [Movie]
-    isWoman: Boolean
+  id: ID!
+  name: String
+  movies: [Movie]
+  isWoman: Boolean
 }
 
 type Studio {
-    id: ID!
-    name: String!
-    rank: Int
+  id: ID!
+  name: String!
+  rank: Int
 }
 
 type Query {
-    movies: [Movie]
+  movies: [Movie]
 }
 
 extend type Mutation {
-    createActor(input: CreateActorInput!): Actor!
+  createActor(input: CreateActorInput!): Actor!
 }
 
 input CreateActorInput {
-    name: String!
-    description: String!
+  name: String!
+  description: String!
 }
