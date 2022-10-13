@@ -15,7 +15,7 @@ export const getRelations = (types: Type[]) => {
     let manyToMany: any[] = [];
     let targetSQLTypeName: string;
     let currentSQLTypeName: string;
-    let relatedFieldName: string | undefined;
+    let relatedFieldNames: string[] | undefined;
     let targetType: Type | undefined;
     types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
         .forEach(currentType => {
@@ -23,13 +23,14 @@ export const getRelations = (types: Type[]) => {
             relationalFields.forEach(relationalField => {
                 let inn = relationalField.isArray ? 2 : 1;
                 let out = getRelationOf(relationalField.type, types, currentType.typeName);
+                relatedFieldNames = getRelatedFieldName(currentType.typeName, types, relationalField.type);
                 switch (true) {     //Switch true to check multiple arguments
                     /** OneOnly relationships **/
                     case inn === 1 && out === 0:
-                        currentType.relationList.push({
-                            type: relationalField.type,
-                            relation: Relationships.oneOnly
-                        });
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.oneOnly,
+                            });
 
                         targetSQLTypeName = getSQLTableName(relationalField.type);
                         relationalField.relation = true;
@@ -42,13 +43,16 @@ export const getRelations = (types: Type[]) => {
                             constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                         };
                         break;
-                    /** OneToOne || SelfJoinOne relationships **/
+                    /** SelfJoinOne | OneToOne relationships **/
                     case inn === 1 && out === 1:
                         if (relationalField.type === currentType.typeName) {
-                            currentType.relationList.push({
-                                type: relationalField.type,
-                                relation: Relationships.selfJoinOne
-                            });
+                            for (let relatedFieldName of relatedFieldNames) {
+                                currentType.relationList.push({
+                                    type: relationalField.type,
+                                    relation: Relationships.selfJoinOne,
+                                    relatedFieldName,
+                                });
+                            }
 
                             targetSQLTypeName = getSQLTableName(relationalField.type);
                             relationalField.relation = true;
@@ -61,22 +65,31 @@ export const getRelations = (types: Type[]) => {
                                 constraint: `FOREIGN KEY ("Fk_${relationalField.name}_${targetSQLTypeName}_id") REFERENCES "${targetSQLTypeName}" ("Pk_${targetSQLTypeName}_id")`
                             };
                         } else {
-                            let targetedType = types.find(type => type.typeName === relationalField.type)
-                            let targetField = targetedType?.fields.find(field => field.type === currentType.typeName)
+                            let targetedType = types.find(type => type.typeName === relationalField.type);
+                            let targetField = targetedType?.fields.find(field => field.type === currentType.typeName);
+
+                            let relationType = currentType.directives.find(directive => directive.name === "Join") ? Relationships.oneToOneJoin : Relationships.oneToOne;
+
 
                             if (targetField?.noNull && relationalField.noNull) {
                                 throw new OneToOneRelationNotAllowedError()
                             }
 
-                            currentType.relationList.push({
-                                type: relationalField.type,
-                                relation: Relationships.oneToOne
-                            })
+                            for (let relatedFieldName of relatedFieldNames) {
+                                currentType.relationList.push({
+                                    type: relationalField.type,
+                                    relation: relationType,
+                                    relatedFieldName,
+                                });
+                            }
+   
+                            if(relationType) {
+                                relationalField.relation = true;
+                                relationalField.relationType = relationType;
+                            }
 
                             if (!targetField?.oneToOneInfo) {
                                 targetSQLTypeName = getSQLTableName(relationalField.type)
-                                relationalField.relation = true;
-                                relationalField.relationType = Relationships.oneToOne
                                 relationalField.foreign_key = {
                                     name: `Fk_${relationalField.name}_${targetSQLTypeName}_id`,
                                     type: "int",
@@ -90,14 +103,15 @@ export const getRelations = (types: Type[]) => {
                         break;
                     /** OneToMany relationships **/
                     case inn === 1 && out === 2:
-                        relatedFieldName = getRelatedFieldName(currentType.typeName, types, relationalField.type);
-                        currentType.relationList.push({
-                            type: relationalField.type,
-                            relation: Relationships.oneToMany,
-                            relatedFieldName,
-                        });
+                        for (let relatedFieldName of relatedFieldNames) {
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.oneToMany,
+                                relatedFieldName,
+                            });
+                        }
 
-                        targetSQLTypeName = getSQLTableName(relationalField.type)
+                        targetSQLTypeName = getSQLTableName(relationalField.type);
                         relationalField.relation = true;
                         relationalField.relationType = Relationships.oneToMany;
                         relationalField.foreign_key = {
@@ -110,10 +124,10 @@ export const getRelations = (types: Type[]) => {
                         break;
                     /** ManyOnly relationships **/
                     case inn === 2 && out === 0:
-                        currentType.relationList.push({
-                            type: relationalField.type,
-                            relation: Relationships.manyOnly
-                        });
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.manyOnly,
+                            });
 
                         targetSQLTypeName = getSQLTableName(relationalField.type);
                         currentSQLTypeName = getSQLTableName(currentType.typeName)
@@ -157,27 +171,30 @@ export const getRelations = (types: Type[]) => {
 
                     /** ManyToOne **/
                     case inn === 2 && out === 1:
-                        relatedFieldName = getRelatedFieldName(currentType.typeName, types, relationalField.type);
-                        currentType.relationList.push({
-                            type: relationalField.type,
-                            relation: Relationships.manyToOne,
-                            relatedFieldName,
-                        });
-
+                        for (let relatedFieldName of relatedFieldNames) {
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: Relationships.manyToOne,
+                                relatedFieldName,
+                            });
+                        }
+                        
                         relationalField.relation = true;
                         relationalField.relationType = Relationships.manyToOne;
                         relationalField.in_model = false;
                         break;
-                    /** ManyToMany | SelfJoinMany **/
+                    /** SelfJoinMany | ManyToMany **/
                     case inn === 2 && out === 2:
-                        targetSQLTypeName = getSQLTableName(relationalField.type)
-                        currentSQLTypeName = getSQLTableName(currentType.typeName)
-
+                        targetSQLTypeName = getSQLTableName(relationalField.type);
+                        currentSQLTypeName = getSQLTableName(currentType.typeName);
                         if (relationalField.type === currentType.typeName) {
-                            currentType.relationList.push({
-                                type: relationalField.type,
-                                relation: Relationships.selfJoinMany
-                            });
+                            for (let relatedFieldName of relatedFieldNames) {
+                                currentType.relationList.push({
+                                    type: relationalField.type,
+                                    relation: Relationships.selfJoinMany,
+                                    relatedFieldName,
+                                });
+                            }
 
                             relationalField.relationType = Relationships.selfJoinMany;
 
@@ -194,12 +211,18 @@ export const getRelations = (types: Type[]) => {
                                 constraint: `FOREIGN KEY ("${currentSQLTypeName}2_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
                             });
                         } else {
-                            currentType.relationList.push({
-                                type: relationalField.type,
-                                relation: Relationships.manyToMany
-                            });
 
-                            relationalField.relationType = Relationships.manyToMany;
+                            let relationType = currentType.directives.find(directive => directive.name === "Join") ? Relationships.manyToManyJoin : Relationships.manyToMany;
+                            for (let relatedFieldName of relatedFieldNames) {
+                                currentType.relationList.push({
+                                    type: relationalField.type,
+                                    relation: relationType,
+                                    relatedFieldName,
+                                });
+                            }
+                            
+                            if(relationType)
+                            relationalField.relationType = relationType;
 
                             targetType = types.find(type => type.typeName === relationalField.type);
                             let targetField = targetType?.fields.find(field => field.type === currentType.typeName);
@@ -235,6 +258,13 @@ export const getRelations = (types: Type[]) => {
                         break;
                 }
             })
+            // Remove duplicates in relationList
+            currentType.relationList = currentType.relationList.filter((value, index, self) =>
+            index === self.findIndex((relation) => (
+                relation.type === value.type 
+                && relation.relation === value.relation 
+                && relation.relatedFieldName === value.relatedFieldName
+            )));
         })
     return types
 }
@@ -333,13 +363,51 @@ const getRelationOf = (targetTypeName: string, types: Type[], currentTypeName: s
 
 /**
  *
- * @param {*} targetTypeName : Target type for the relation
- * @param {*} types : Types defined in the schema
  * @param {*} currentTypeName : Current Type being processed
- * @returns : 2 if relationship is [Type], 1 if relationship is Type, 0 if no relationship
+ * @param {*} types : Types defined in the schema
+ * @param {*} relatedFieldType : Target field for the relation
  */
 const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFieldType: string) => {
     const relatedType = types.find(type => type.typeName === relatedFieldType);
-    const relatedField = relatedType?.fields.find(field => field.type.toLowerCase().includes(currentTypeName.toLowerCase()));
-    return (relatedField?.name);
+    const relatedFields = relatedType?.fields.filter(field => field.type.toLowerCase().includes(currentTypeName.toLowerCase()));
+    let relatedFieldsNames : string[] = [];
+    if (relatedFields){
+        for (let  i = 0; i < relatedFields.length; i++) {
+            relatedFieldsNames.push(relatedFields[i].name);
+        }
+    }
+    return (relatedFieldsNames);
 };
+
+/**
+ * Determine wheter the type show carry the mention @JointTable on the base of its id in the types array
+ *
+ * @param {*} currentType : Current Type being processed
+ * @param {*} types : Types defined in the schema
+ * @param {*} relatedFieldType : Target field for the relation
+ */
+ const isEnumUpdate = (currentType: Type, types: Type[], relatedField: Field) => {
+
+    if(types.find(type => relatedField.type === type.typeName && type.type === "EnumTypeDefinition"))
+    relatedField.isEnum = true;
+    return currentType.directives.find(directive => directive.name === "Join") ? Relationships.manyToManyJoin : Relationships.manyToMany;
+/*
+    const relatedType = types.find(type => type.typeName === relatedFieldType);
+
+    if(relatedType) {
+        
+        console.log(types);
+        console.log(types.indexOf(currentType));
+        console.log(types.indexOf(relatedType));
+        
+
+        if (types.indexOf(currentType) < types.indexOf(relatedType))
+            return Relationships.manyToManyJoin;
+        else return Relationships.manyToMany;
+    }
+    */
+};
+
+
+
+

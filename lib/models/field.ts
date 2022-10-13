@@ -4,6 +4,7 @@ import {Scalars} from "../constants/scalar";
 export interface IField {
     name: string;
     type: string;
+    isEnum: boolean;
     relationType: Relationships;
     relation: boolean;
     in_model: boolean;
@@ -23,6 +24,7 @@ export interface IField {
 export class Field {
     name: string;
     type: string;
+    isEnum: boolean;
     relationType: Relationships;
     relation: boolean;
     in_model: boolean;
@@ -43,6 +45,7 @@ export class Field {
     constructor(
         name: string,
         type: string,
+        isEnum: boolean,
         noNullArrayValues: boolean,
         noNull: boolean,
         isArray: boolean,
@@ -52,6 +55,7 @@ export class Field {
     ) {
         this.name = name
         this.type = type
+        this.isEnum = isEnum;
         this.noNullArrayValues = noNullArrayValues
         this.noNull = noNull
         this.isArray = isArray
