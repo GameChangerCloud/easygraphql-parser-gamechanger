@@ -32,4 +32,12 @@ export const directives = {
             console.log('simple warning')
         },
     },
+    join: {
+        name: 'Join',
+        type: 'perform',
+        runtime: false,
+        resolve: function() {
+            console.log('Joining type')
+        },
+    },
 }
