@@ -1,11 +1,11 @@
 type Movie {
   id: ID!
   title: String
-  actors: [Actor] @hasInverse(field: movies)
+  actors: [Actor] @hasInverse(field: movies) 
   studio: Studio!
 }
 
-type Actor {
+type Actor @Join {
   id: ID!
   name: String
   movies: [Movie]
