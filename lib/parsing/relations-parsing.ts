@@ -378,36 +378,3 @@ const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFiel
     }
     return (relatedFieldsNames);
 };
-
-/**
- * Determine wheter the type show carry the mention @JointTable on the base of its id in the types array
- *
- * @param {*} currentType : Current Type being processed
- * @param {*} types : Types defined in the schema
- * @param {*} relatedFieldType : Target field for the relation
- */
- const isEnumUpdate = (currentType: Type, types: Type[], relatedField: Field) => {
-
-    if(types.find(type => relatedField.type === type.typeName && type.type === "EnumTypeDefinition"))
-    relatedField.isEnum = true;
-    return currentType.directives.find(directive => directive.name === "Join") ? Relationships.manyToManyJoin : Relationships.manyToMany;
-/*
-    const relatedType = types.find(type => type.typeName === relatedFieldType);
-
-    if(relatedType) {
-        
-        console.log(types);
-        console.log(types.indexOf(currentType));
-        console.log(types.indexOf(relatedType));
-        
-
-        if (types.indexOf(currentType) < types.indexOf(relatedType))
-            return Relationships.manyToManyJoin;
-        else return Relationships.manyToMany;
-    }
-    */
-};
-
-
-
-
