@@ -6,6 +6,13 @@ enum Location {
 
 union SearchResult = School | Student | Location
 
+type Student {
+  firstName: String!
+  lastName: String!
+  grade: Int
+  school: School
+}
+
 type School {
   name: String!
   users: [Student]!
