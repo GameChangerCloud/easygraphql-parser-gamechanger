@@ -73,11 +73,13 @@ export class Type {
             types.push(typeToAdd)
         }
 
-        types.filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
+        // change isEnum attribute of field if it refers to an Enumeation Type
+        types.filter(type => type.type === "ObjectTypeDefinition")
         .forEach(currentType => {
             currentType.fields.forEach(field => {
                 if(types.find(typeE => field.type === typeE.typeName && typeE.type === "EnumTypeDefinition"))
                 field.isEnum = true;
+                else field.isEnum = false;
             })
 
         });
