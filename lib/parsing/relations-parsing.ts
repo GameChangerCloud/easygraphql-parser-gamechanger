@@ -377,9 +377,6 @@ const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFiel
         }
     }
     return (relatedFieldsNames);
-<<<<<<< HEAD
-};
-=======
 };
 
 /**
