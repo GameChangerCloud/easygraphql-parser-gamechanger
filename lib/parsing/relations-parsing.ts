@@ -407,8 +407,3 @@ const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFiel
     }
     */
 };
-
-
-
-
->>>>>>> 9e95706 (Add relation field (relatedFieldName) + manage join annotation)
