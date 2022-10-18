@@ -1,0 +1,58 @@
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "typeName": "Movie",
+    "sqlTypeName": "movie",
+    "description": "",
+    "directives": [],
+    "fields": [
+      {
+        "name": "movies",
+        "type": "Movie",
+        "noNullArrayValues": false,
+        "noNull": false,
+        "isArray": true,
+        "directives": [],
+        "arguments": [],
+        "isDeprecated": false,
+        "foreign_key": null,
+        "relation": true,
+        "delegated_field": {
+          "state": false,
+          "side": null,
+          "associatedWith": {
+            "type": null,
+            "fieldName": null
+          }
+        },
+        "in_model": false,
+        "joinTable": {
+          "state": true,
+          "name": "Movie_Movie_movies",
+          "contains": [
+            {
+              "fieldName": "movie1_id",
+              "type": "Movie",
+              "constraint": "FOREIGN KEY (\"movie1_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+            },
+            {
+              "fieldName": "movie2_id",
+              "type": "Movie",
+              "constraint": "FOREIGN KEY (\"movie2_id\") REFERENCES \"movie\" (\"Pk_movie_id\")"
+            }
+          ]
+        },
+        "oneToOneInfo": null,
+        "sqlType": "int",
+        "relationType": "selfJoinMany"
+      }
+    ],
+    "implementedTypes": [],
+    "relationList": [
+      {
+        "type": "Movie",
+        "relation": "selfJoinMany"
+      }
+    ]
+  }
+]

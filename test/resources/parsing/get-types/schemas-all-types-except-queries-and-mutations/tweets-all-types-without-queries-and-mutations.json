@@ -1,1 +1,329 @@
-[{"type":"ObjectTypeDefinition","fields":[{"name":"id","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"ID"},{"name":"body","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"},{"name":"date","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"DateTime"},{"name":"author","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"User"},{"name":"stats","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Stat"}],"values":[],"types":[],"implementedTypes":[],"directives":[],"typeName":"Tweet"},{"type":"ScalarTypeDefinition","fields":[],"values":[],"types":[],"implementedTypes":[],"directives":[],"typeName":"DateTime"},{"type":"ObjectTypeDefinition","fields":[{"name":"id","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"ID"},{"name":"username","arguments":[],"isDeprecated":false,"directives":[{"name":"length","args":[{"name":"min","value":"4"},{"name":"max","value":"35"}]},{"name":"format","args":[{"name":"formatType","value":"UTF-8"}]}],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"},{"name":"firstname","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"},{"name":"lastname","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"},{"name":"fullname","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"},{"name":"age","arguments":[],"isDeprecated":false,"directives":[{"name":"valueReducer","args":[{"name":"reduceby","value":"10"}]}],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"},{"name":"name","arguments":[],"isDeprecated":true,"directives":[{"name":"deprecated","args":[]}],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"}],"values":[],"types":[],"implementedTypes":[],"directives":[{"name":"auth","args":[{"name":"requires","value":"USER"}]}],"typeName":"User"},{"type":"ObjectTypeDefinition","fields":[{"name":"id","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"ID"},{"name":"views","arguments":[],"isDeprecated":false,"directives":[{"name":"valueReducer","args":[{"name":"reduceby","value":"10"}]}],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"},{"name":"likes","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"},{"name":"retweets","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"},{"name":"responses","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"}],"values":[],"types":[],"implementedTypes":[],"directives":[],"typeName":"Stat"},{"type":"ObjectTypeDefinition","fields":[{"name":"id","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"ID"},{"name":"type","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"String"}],"values":[],"types":[],"implementedTypes":[],"directives":[],"typeName":"Notification"},{"type":"ObjectTypeDefinition","fields":[{"name":"id","arguments":[],"isDeprecated":false,"directives":[],"noNull":true,"isArray":false,"noNullArrayValues":false,"type":"ID"},{"name":"count","arguments":[],"isDeprecated":false,"directives":[],"noNull":false,"isArray":false,"noNullArrayValues":false,"type":"Int"}],"values":[],"types":[],"implementedTypes":[],"directives":[],"typeName":"Meta"}]
+[
+  {
+    "type": "ObjectTypeDefinition",
+    "fields": [
+      {
+        "name": "id",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "ID"
+      },
+      {
+        "name": "body",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      },
+      {
+        "name": "date",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "DateTime"
+      },
+      {
+        "name": "author",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "User"
+      },
+      {
+        "name": "stats",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Stat"
+      }
+    ],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [],
+    "typeName": "Tweet"
+  },
+  {
+    "type": "ScalarTypeDefinition",
+    "fields": [],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [],
+    "typeName": "DateTime"
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "fields": [
+      {
+        "name": "id",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "ID"
+      },
+      {
+        "name": "username",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [
+          {
+            "name": "length",
+            "args": [
+              {
+                "name": "min",
+                "value": "4"
+              },
+              {
+                "name": "max",
+                "value": "35"
+              }
+            ]
+          },
+          {
+            "name": "format",
+            "args": [
+              {
+                "name": "formatType",
+                "value": "UTF-8"
+              }
+            ]
+          }
+        ],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      },
+      {
+        "name": "firstname",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      },
+      {
+        "name": "lastname",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      },
+      {
+        "name": "fullname",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      },
+      {
+        "name": "age",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [
+          {
+            "name": "valueReducer",
+            "args": [
+              {
+                "name": "reduceby",
+                "value": "10"
+              }
+            ]
+          }
+        ],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      },
+      {
+        "name": "name",
+        "arguments": [],
+        "isDeprecated": true,
+        "directives": [
+          {
+            "name": "deprecated",
+            "args": []
+          }
+        ],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      }
+    ],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [
+      {
+        "name": "auth",
+        "args": [
+          {
+            "name": "requires",
+            "value": "USER"
+          }
+        ]
+      }
+    ],
+    "typeName": "User"
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "fields": [
+      {
+        "name": "id",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "ID"
+      },
+      {
+        "name": "views",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [
+          {
+            "name": "valueReducer",
+            "args": [
+              {
+                "name": "reduceby",
+                "value": "10"
+              }
+            ]
+          }
+        ],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      },
+      {
+        "name": "likes",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      },
+      {
+        "name": "retweets",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      },
+      {
+        "name": "responses",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      }
+    ],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [],
+    "typeName": "Stat"
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "fields": [
+      {
+        "name": "id",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "ID"
+      },
+      {
+        "name": "type",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "String"
+      }
+    ],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [],
+    "typeName": "Notification"
+  },
+  {
+    "type": "ObjectTypeDefinition",
+    "fields": [
+      {
+        "name": "id",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": true,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "ID"
+      },
+      {
+        "name": "count",
+        "arguments": [],
+        "isDeprecated": false,
+        "directives": [],
+        "noNull": false,
+        "isArray": false,
+        "noNullArrayValues": false,
+        "type": "Int"
+      }
+    ],
+    "values": [],
+    "types": [],
+    "implementedTypes": [],
+    "directives": [],
+    "typeName": "Meta"
+  }
+]

@@ -1,6 +1,5 @@
-import {getSQLTableName, isBasicType, isScalar, Scalars} from "../../lib";
+import {getSQLTableName, isBasicScalar, isScalar, Scalars} from "../../lib";
 import {expect} from "chai";
-import exp = require("constants");
 import {getFieldCreate, getFieldName} from "../../lib/scalar-managment/manage-scalars";
 
 describe('scalar-management methods', () => {
@@ -26,19 +25,19 @@ describe('scalar-management methods', () => {
         })
     })
 
-    describe('isBasicType method', () => {
+    describe('isBasicScalar method', () => {
         it('Given a default scalar, should return true', () => {
             //GIVEN defaultScalars
 
             //WHEN
             defaultScalars.forEach(scalar => {
                 //THEN
-                expect(isBasicType(scalar)).to.be.true
+                expect(isBasicScalar(scalar)).to.be.true
             })
         });
 
         it('Given unknown scalar, should return false', () => {
-            expect(isBasicType("Long")).to.be.false
+            expect(isBasicScalar("Long")).to.be.false
         })
     })
 

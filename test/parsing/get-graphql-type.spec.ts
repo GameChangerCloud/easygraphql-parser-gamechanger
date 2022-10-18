@@ -1,53 +1,68 @@
-import {getGraphqlType} from "../../lib";
+import {getGraphqlType, Type, typesGenerator} from "../../lib";
 import {expect} from "chai";
 import {IType} from "../../lib/models/type";
+import {NotUsedTypeError} from "../../lib/parsing/error/not-used-type.error";
 
-describe('getGraphqlType', function () {
-    describe('should return the corresponding graphQL type', function () {
-        it('should return graphql types', function () {
-            // GIVEN
-            const types = ["EnumTypeDefinition","InterfaceTypeDefinition","ObjectTypeDefinition","ScalarTypeDefinition"];
-            const expectations = ["GraphQLEnumType","GraphQLInterfaceType","GraphQLObjectType","GraphQLScalarType"];
-            let type: IType;
-            for (let index = 0; index < types.length; index++) {
-                type = {
-                    "type": types[index],
-                    "typeName": "Test",
-                    "sqlTypeName": "test",
-                    "description": "",
-                    "directives": [],
-                    "fields": [],
-                    "implementedTypes": [],
-                    "relationList": []
-                };
+describe('Should return the corresponding graphQL type', function () {
+    function buildType(type: string): Type {
+        return new Type(
+            type,
+            "Test",
+            "test",
+            "",
+            [],
+            []
+        );
+    }
 
-                // WHEN
-                const graphqlType = getGraphqlType(type)
+    it('should return GraphQLEnumType', function () {
+        // GIVEN
+        const type = buildType("EnumTypeDefinition");
 
-                // THEN
-                expect(graphqlType).to.exist
-                expect(graphqlType).to.be.equals(expectations[index]);
-            }
-        });
+        // WHEN
+        const graphqlType = getGraphqlType(type);
 
-    })
+        // THEN
+        expect(graphqlType).to.be.equals("GraphQLEnumType");
+    });
+    it('should return GraphQLInterfaceType', function () {
+        // GIVEN
+        const type = buildType("InterfaceTypeDefinition");
 
-    describe('type is not known', function (){
-        it('should return undefined', () => {
-            const type: IType = {
-                "type": "TestType",
-                "typeName": "Test",
-                "sqlTypeName": "test",
-                "description": "",
-                "directives": [],
-                "fields": [],
-                "implementedTypes": [],
-                "relationList": []
-            };
-            const graphqlType = getGraphqlType(type)
-            expect(graphqlType).to.not.exist
-            expect(graphqlType).to.be.equals(undefined);
-        });
-    })
+        // WHEN
+        const graphqlType = getGraphqlType(type);
+
+        // THEN
+        expect(graphqlType).to.be.equals("GraphQLInterfaceType");
+    });
+    it('should return GraphQLObjectType', function () {
+        // GIVEN
+        const type = buildType("ObjectTypeDefinition");
+
+        // WHEN
+        const graphqlType = getGraphqlType(type);
+
+        // THEN
+        expect(graphqlType).to.be.equals("GraphQLObjectType");
+    });
+    it('should return GraphQLScalarType', function () {
+        // GIVEN
+        const type = buildType("ScalarTypeDefinition");
+
+        // WHEN
+        const graphqlType = getGraphqlType(type);
+
+        // THEN
+        expect(graphqlType).to.be.equals("GraphQLScalarType");
+    });
+
+    it('should throw NotUsedTypeError', function () {
+        // GIVEN
+        const type = buildType("");
+        // THEN
+        expect(() => getGraphqlType(type))
+            .to.throw(NotUsedTypeError)
+    });
+
 });
 

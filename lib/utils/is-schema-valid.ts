@@ -1,5 +1,5 @@
 import {IType} from "../models/type";
-import {isBasicType} from "../scalar-managment/manage-scalars";
+import {isBasicScalar} from "../scalar-managment/manage-scalars";
 
 export const isSchemaValid = (types: IType[]) => {
     let typesNames = types.map(type => type.typeName)
@@ -33,7 +33,7 @@ const typesHaveId = (typesNames, types) => {
 const fieldTypeExists = (typesNames: string[], types: IType[]) => {
     for (let type of types) {
         for (let field of type.fields) {
-            if(!isBasicType(field.type) && !typesNames.includes(field.type)){
+            if(!isBasicScalar(field.type) && !typesNames.includes(field.type)){
                 return false
             }
         }

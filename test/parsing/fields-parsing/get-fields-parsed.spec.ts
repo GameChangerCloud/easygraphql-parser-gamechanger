@@ -1,7 +1,7 @@
 import {IType, Type} from "../../../lib/models/type";
 import fs from "fs";
 import path from "path";
-import {getFieldsParsed, Scalars, schemaParser} from "../../../lib";
+import {getFieldsParsed, schemaParser} from "../../../lib";
 import {expect} from "chai";
 import util from "util";
 
@@ -26,7 +26,7 @@ describe('GetFieldsParsed Method', () => {
             let expected = `${IDField.name}: { type: new GraphQLNonNull(GraphQLID) },\n`
 
             //WHEN
-            let result = getFieldsParsed(type, [], [], [])
+            let result = getFieldsParsed(type, [], [])
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -55,8 +55,8 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let mutationResult = getFieldsParsed(mutationType, [], [], [])
-            let queryResult = getFieldsParsed(queryType, [], [], [])
+            let mutationResult = getFieldsParsed(mutationType, [], [])
+            let queryResult = getFieldsParsed(queryType, [], [])
 
             //THEN
             expect(mutationResult).to.be.equals(mutationExpected)
@@ -74,7 +74,7 @@ describe('GetFieldsParsed Method', () => {
             let expected = `${IDField.name}: { type: new GraphQLNonNull(GraphQLString) },\n`
 
             //WHEN
-            let result = getFieldsParsed(type, [], [], [])
+            let result = getFieldsParsed(type, [], [])
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -103,8 +103,8 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let mutationResult = getFieldsParsed(mutationType, [], [], [])
-            let queryResult = getFieldsParsed(queryType, [], [], [])
+            let mutationResult = getFieldsParsed(mutationType, [], [])
+            let queryResult = getFieldsParsed(queryType, [], [])
 
             //THEN
             expect(mutationResult).to.be.equals(mutationExpected)
@@ -122,7 +122,7 @@ describe('GetFieldsParsed Method', () => {
             let expected = `${IDField.name}: { type: new GraphQLNonNull(GraphQLInt) },\n`
 
             //WHEN
-            let result = getFieldsParsed(type, [], [], [])
+            let result = getFieldsParsed(type, [], [])
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -151,8 +151,8 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let mutationResult = getFieldsParsed(mutationType, [], [], [])
-            let queryResult = getFieldsParsed(queryType, [], [], [])
+            let mutationResult = getFieldsParsed(mutationType, [], [])
+            let queryResult = getFieldsParsed(queryType, [], [])
 
             //THEN
             expect(mutationResult).to.be.equals(mutationExpected)
@@ -170,7 +170,7 @@ describe('GetFieldsParsed Method', () => {
             let expected = `${IDField.name}: { type: new GraphQLNonNull(GraphQLBoolean) },\n`
 
             //WHEN
-            let result = getFieldsParsed(type, [], [], [])
+            let result = getFieldsParsed(type, [], [])
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -199,8 +199,8 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let mutationResult = getFieldsParsed(mutationType, [], [], [])
-            let queryResult = getFieldsParsed(queryType, [], [], [])
+            let mutationResult = getFieldsParsed(mutationType, [], [])
+            let queryResult = getFieldsParsed(queryType, [], [])
 
             //THEN
             expect(mutationResult).to.be.equals(mutationExpected)
@@ -209,7 +209,6 @@ describe('GetFieldsParsed Method', () => {
     })
 
     describe('Given type with non default field, should return right message', () => {
-        let scalars = Object.values(Scalars);
 
         it('Type is Query', () => {
             //GIVEN
@@ -235,7 +234,7 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let result = getFieldsParsed(type, [], typesNameArray, scalars)
+            let result = getFieldsParsed(type, [], typesNameArray)
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -265,7 +264,7 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t}\n`
                 + `\t\t},\n`
             //WHEN
-            let result = getFieldsParsed(type, [], typesNameArray, scalars)
+            let result = getFieldsParsed(type, [], typesNameArray)
 
             //THEN
             expect(result).to.be.equals(expected)
@@ -292,8 +291,8 @@ describe('GetFieldsParsed Method', () => {
                 + `\t\t\t\t\tresolve: (obj, args, context) => {\n\t\t\t\treturn resolveType(args)\n\t\t\t}`
                 + `\n\t\t},\n`
             //WHEN
-            let result = getFieldsParsed(type, [], typesNameArray, scalars)
-            let interfaceResult = getFieldsParsed(interfaceType, [], typesNameArray, scalars)
+            let result = getFieldsParsed(type, [], typesNameArray)
+            let interfaceResult = getFieldsParsed(interfaceType, [], typesNameArray)
             //THEN
             expect(result).to.be.equals(expected)
             expect(interfaceResult).to.be.equals(expectedInterface)

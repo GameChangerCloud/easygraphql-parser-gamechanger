@@ -1,13 +1,13 @@
 [
   {
     "name": "Movie",
-    "sqlname": "movie",
+    "sqlName": "movie",
     "columns": [
       {
         "field": "Pk_movie_id",
         "fieldType": "int",
         "unique": false,
-        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "constraint": "SERIAL PRIMARY KEY",
         "isArray": false,
         "gqlType": "ID",
         "noNull": true,
@@ -90,6 +90,7 @@
         "constraint": "FOREIGN KEY (\"Fk_studio_studio_id\") REFERENCES \"studio\" (\"Pk_studio_id\")",
         "isArray": false,
         "gqlType": "int",
+        "noNull": true,
         "noNullArrayValues": false
       },
       {
@@ -356,9 +357,9 @@
         "field": "Fk_movies_actor_id",
         "fieldType": "int",
         "unique": false,
-        "constraint": null,
-        "isArray": true,
-        "gqlType": "Int",
+        "constraint": "FOREIGN KEY (\"Fk_movies_actor_id\") REFERENCES \"actor\" (\"Pk_actor_id\")",
+        "isArray": false,
+        "gqlType": "int",
         "noNull": false,
         "noNullArrayValues": false
       }
@@ -367,13 +368,13 @@
   },
   {
     "name": "Actor",
-    "sqlname": "actor",
+    "sqlName": "actor",
     "columns": [
       {
         "field": "Pk_actor_id",
         "fieldType": "int",
         "unique": false,
-        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "constraint": "SERIAL PRIMARY KEY",
         "isArray": false,
         "gqlType": "ID",
         "noNull": true,
@@ -454,13 +455,13 @@
   },
   {
     "name": "Studio",
-    "sqlname": "studio",
+    "sqlName": "studio",
     "columns": [
       {
         "field": "Pk_studio_id",
         "fieldType": "int",
         "unique": false,
-        "constraint": "SERIAL PRIMARY KEY NOT NULL",
+        "constraint": "SERIAL PRIMARY KEY",
         "isArray": false,
         "gqlType": "ID",
         "noNull": true,

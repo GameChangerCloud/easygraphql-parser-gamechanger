@@ -1,25 +1,28 @@
-import {IType} from "../models/type";
+import {Type} from "../models/type";
 import {Scalars} from "../constants/scalar";
 import {isBasicType, isScalar} from "../scalar-managment/manage-scalars";
-import {IField} from "../models/field";
-
+import {Field} from "../models/field";
 /** Fonctions principales */
 /** DATABASE (tables, init, fill, drop) */
 
 // Tables
 // Get all the tables, with columns, based on the types we have
-export const getAllTables = (types) => {
+export const getAllTables = (types: Type[]) => {
     let allTables: any = []
-    let typesNameArray = types.map(type => type.typeName)
-    types.forEach(type => {
+    let typesNameArray: string[] = types.map(type => type.typeName)
+    types.forEach(currentType => {
         let tableTemp: any = []
         // Fill up the infos on scalar field (int, string, etc.)
-        if (type.typeName !== "Query" && type.typeName !== "Mutation" && type.typeName !== "Subscription" && !isScalar(type.typeName)) {
+        if (currentType.isNotOperation() && currentType.type === "ObjectTypeDefinition") {
             //get scalar field infos
-            tableTemp.push(...getScalarFieldInfo(type, typesNameArray))
+            tableTemp.push(...getScalarFieldInfo(currentType))
 
-            //TODO sqlname can be changed into sqlName but need changes in a lot of files of the aws generator
-            allTables.push({name: type.typeName, sqlname: type.sqlTypeName, columns: tableTemp, isJoinTable: false})
+            allTables.push({
+                name: currentType.typeName,
+                sqlName: currentType.sqlTypeName,
+                columns: tableTemp,
+                isJoinTable: false
+            })
         }
     })
 
@@ -46,7 +49,7 @@ export const getInitEachFieldsModelsJS = (types) => {
 const getInitEachModelsFields = (types) => {
     let s = '';
     types.forEach(type => {
-        if (type.typeName !== "Query" && type.typeName !== "Mutation" && type.typeName !== "Subscription") {
+        if (type.isNotOperation()) {
             let nameList = type.typeName.toLowerCase()
             s += 'for(let i = 0; i < ' + nameList + 'Tab.length; i++){\n\t' + nameList + 'Tab[i] = update' + type.typeName + '(' + nameList + 'Tab[i], i);\n}';
         }
@@ -54,7 +57,7 @@ const getInitEachModelsFields = (types) => {
     return s;
 }
 
-const pushBasicScalarFieldInfo = (currentType: IType, field: IField, tableTemp: any[]) => {
+const pushBasicScalarFieldInfo = (currentType: Type, field: Field, tableTemp: any[]) => {
     switch (field.type) {
         case "ID":
             tableTemp.push({
@@ -352,7 +355,7 @@ function pushCustomScalarFieldInfo(currentType: IType, field: IField, tableTemp:
 
 }
 
-const getScalarFieldInfo = (currentType: IType, typesNameArray: string[]) => {
+const getScalarFieldInfo = (currentType: Type, typesNameArray: string[]) => {
     let tableTemp: any[] = []
     currentType.fields.forEach(field => {
         if (!typesNameArray.includes(field.type) && field["in_model"] && isBasicType(field.type)) {
@@ -366,16 +369,12 @@ const getScalarFieldInfo = (currentType: IType, typesNameArray: string[]) => {
                     field: fkInfo.name,
                     fieldType: fkInfo.type,
                     unique: false,
-                    constraint: fkInfo.constraint,
-                    isArray: fkInfo.isArray,
-                    gqlType: fkInfo.type,
-                    noNullArrayValues: field.noNullArrayValues
-                })
-                field.sqlType = fkInfo.type
+                    constraint: currentField.type === "ID" ? "SERIAL PRIMARY KEY" : null,
+                    isArray: currentField.isArray,
+                    gqlType: currentField.type,
+                    noNull: currentField.noNull,
+                    noNullArrayValues: currentField.noNullArrayValues
+                }
             }
-        }
-    })
-
-    return tableTemp
-
+        })
 }

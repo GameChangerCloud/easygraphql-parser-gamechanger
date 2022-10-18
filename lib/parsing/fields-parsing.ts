@@ -156,7 +156,7 @@ export const getFieldsCreate = (currentTypeName, fields, relations, manyToManyTa
     return sqlFields.filter(field => !field.includes("args.id")).join(` + "," + `);
 };
 
-export const getFieldsName = (tables, fields, currentTypeName, currentSQLTypeName, relations) => {
+export const getFieldsName = (fields, currentTypeName, currentSQLTypeName, relations) => {
     let sqlNames: any[] = [];
     // Deal with scalar first (removing any Array)
     fields.filter(field => !field.isArray && field.delegated_field.side !== "target").forEach(field => {
@@ -279,9 +279,7 @@ const buildResolver = (field, hasArguments, currentTypeName, relationType, manyT
 
 // Construct the resolver for interface
 const buildResolverInterface = () => {
-    let result = "";
-    result += "\t\t\tresolve: (obj, args, context) => {\n\t\t\t\treturn resolveType(args)\n\t\t\t}";
-    return result;
+    return "\t\t\tresolve: (obj, args, context) => {\n\t\t\t\treturn resolveType(args)\n\t\t\t}";
 };
 
 const getManyToManyTableBetween = (typeOne, typeTwo, manyToManyTables) => {
