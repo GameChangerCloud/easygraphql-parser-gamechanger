@@ -13,12 +13,14 @@ export const typesGenerator = (schemaJSON) => {
                 'utf8'
             ));
 
-            types.forEach(type => {
-                console.log(`type ${type.typeName} is missing ID field, one was created automatically`)
-                if (!hasFieldType(type, 'ID').answers) {
-                    type.fields.unshift(idField)
-                }
-            })
+            types
+                .filter(type => type.type === "ObjectTypeDefinition" && type.isNotOperation())
+                .forEach(type => {
+                    console.log(`type ${type.typeName} is missing ID field, one was created automatically`)
+                    if (!hasFieldType(type, 'ID').answers) {
+                        type.fields.unshift(idField)
+                    }
+                })
         } else {
             throw new Error(
                 'Incorrect schema, please write a valid graphql schema based on the supported guidelines.\nReason: ' +
