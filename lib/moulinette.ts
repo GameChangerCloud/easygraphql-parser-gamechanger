@@ -21,10 +21,11 @@ let relations;
  */
 
 fs.readdirSync(RESOURCE_FOLDER).forEach(file => {
-    schemaGQL = fs.readFileSync(
-        path.join(__dirname, RESOURCE_FOLDER, file),
-        'utf8'
-    );
+        schemaGQL = fs.readFileSync(
+            path.join(__dirname, RESOURCE_FOLDER, file),
+            'utf8'
+        );
+    
 
     schemaJSON = schemaParser(schemaGQL);
 

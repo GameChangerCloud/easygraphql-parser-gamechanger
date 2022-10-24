@@ -23,7 +23,7 @@ export const getRelations = (types: Type[]) => {
             relationalFields.forEach(relationalField => {
                 let inn = relationalField.isArray ? 2 : 1;
                 let out = getRelationOf(relationalField.type, types, currentType.typeName);
-                relatedFieldNames = getRelatedFieldName(currentType.typeName, types, relationalField.type);
+                relatedFieldNames = getRelatedFieldsNames(currentType.typeName, types, relationalField.type);
                 switch (true) {     //Switch true to check multiple arguments
                     /** OneOnly relationships **/
                     case inn === 1 && out === 0:
@@ -211,15 +211,13 @@ export const getRelations = (types: Type[]) => {
                                 constraint: `FOREIGN KEY ("${currentSQLTypeName}2_id") REFERENCES "${currentSQLTypeName}" ("Pk_${currentSQLTypeName}_id")`
                             });
                         } else {
-
-                            let relationType = currentType.directives.find(directive => directive.name === "Join") ? Relationships.manyToManyJoin : Relationships.manyToMany;
-                            for (let relatedFieldName of relatedFieldNames) {
-                                currentType.relationList.push({
-                                    type: relationalField.type,
-                                    relation: relationType,
-                                    relatedFieldName,
-                                });
-                            }
+                            const relationParams = getJoinConfiguration(currentType, types, relationalField);
+                            let relationType = relationParams?.joiningType ? Relationships.manyToManyJoin : Relationships.manyToMany;
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: relationType,
+                                relatedFieldName: relationParams?.joinedField,
+                            });
                             
                             if(relationType)
                             relationalField.relationType = relationType;
@@ -367,7 +365,7 @@ const getRelationOf = (targetTypeName: string, types: Type[], currentTypeName: s
  * @param {*} types : Types defined in the schema
  * @param {*} relatedFieldType : Target field for the relation
  */
-const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFieldType: string) => {
+const getRelatedFieldsNames = (currentTypeName: string, types: Type[], relatedFieldType: string) => {
     const relatedType = types.find(type => type.typeName === relatedFieldType);
     const relatedFields = relatedType?.fields.filter(field => field.type.toLowerCase().includes(currentTypeName.toLowerCase()));
     let relatedFieldsNames : string[] = [];
@@ -378,32 +376,45 @@ const getRelatedFieldName = (currentTypeName: string, types: Type[], relatedFiel
     }
     return (relatedFieldsNames);
 };
-
+  
 /**
- * Determine wheter the type show carry the mention @JointTable on the base of its id in the types array
  *
- * @param {*} currentType : Current Type being processed
+ * @param {*} currentTypeName : Current Type being processed
  * @param {*} types : Types defined in the schema
  * @param {*} relatedFieldType : Target field for the relation
  */
- const isEnumUpdate = (currentType: Type, types: Type[], relatedField: Field) => {
-
-    if(types.find(type => relatedField.type === type.typeName && type.type === "EnumTypeDefinition"))
-    relatedField.isEnum = true;
-    return currentType.directives.find(directive => directive.name === "Join") ? Relationships.manyToManyJoin : Relationships.manyToMany;
-/*
-    const relatedType = types.find(type => type.typeName === relatedFieldType);
-
-    if(relatedType) {
-        
-        console.log(types);
-        console.log(types.indexOf(currentType));
-        console.log(types.indexOf(relatedType));
-        
-
-        if (types.indexOf(currentType) < types.indexOf(relatedType))
-            return Relationships.manyToManyJoin;
-        else return Relationships.manyToMany;
+ const getJoinConfiguration = (currentType: Type, types: Type[], relatedField: Field) => {
+    let joinDirectivePresent : boolean = false;
+    let joinDirective = relatedField.directives.find(dir => dir.name === "Join");
+    const relatedType = types.find(type => type.typeName === relatedField.type);
+    const joinedField = relatedType?.fields.find(field => field.type === currentType.typeName);
+    if (joinDirective && joinDirective.args[0].value === joinedField?.name) {
+        joinDirectivePresent = true;
+        return {
+                joiningType : true,
+                joinedField : joinDirective.args[0].value,
+            };
+    } else {
+        joinDirective = joinedField?.directives.find(dir => dir.name === "Join");
+        if (joinDirective && joinDirective.args[0].value === relatedField.name) {
+            joinDirectivePresent = true;
+            return {
+                    joiningType : false,
+                    joinedField : joinedField?.name,
+                };
+        }
+        if(!joinDirectivePresent && relatedType) {
+            if(types.indexOf(currentType) < types.indexOf(relatedType)) {
+                return {
+                    joiningType : true,
+                    joinedField : joinedField?.name,
+                };
+            } else {
+                return {
+                    joiningType : false,
+                    joinedField : joinedField?.name,
+                };
+            }
+        }
     }
-    */
 };
