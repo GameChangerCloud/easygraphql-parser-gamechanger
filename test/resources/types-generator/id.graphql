@@ -1,4 +1,4 @@
 type Movie {
-    id: ID!
-    title: String
+  id: ID!
+  title: String
 }

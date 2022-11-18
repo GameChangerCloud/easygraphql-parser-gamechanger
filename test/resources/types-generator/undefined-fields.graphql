@@ -1,4 +1,4 @@
 type Movie {
-    id: ID!
-    temperature: RGB
+  id: ID!
+  temperature: RGB
 }

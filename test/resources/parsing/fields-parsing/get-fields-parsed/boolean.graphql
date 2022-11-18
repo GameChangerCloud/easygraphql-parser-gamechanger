@@ -1,11 +1,11 @@
 type Person {
-    hasJob: Boolean!
+  hasJob: Boolean!
 }
 
 type Mutation {
-    hasJob(hasJob: Boolean!): Boolean!
+  hasJob(hasJob: Boolean!): Boolean!
 }
 
 type Query {
-    getHasJob: Boolean!
+  getHasJob: Boolean!
 }

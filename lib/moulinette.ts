@@ -5,7 +5,7 @@ import {schemaParser} from "./schema-parser/schemaParser";
 const fs = require("fs");
 const path = require("path");
 
-const RESOURCE_FOLDER = 'test/resources/schema-graphql'
+const RESOURCE_FOLDER = '../test/resources/schema-graphql'
 const JSON_FOLDER = '../test/resources/schema-json'
 const TYPES_FOLDER = '../test/resources/schema-types'
 const RELATIONS_FOLDER = '../test/resources/schema-relations'
@@ -21,10 +21,11 @@ let relations;
  */
 
 fs.readdirSync(RESOURCE_FOLDER).forEach(file => {
-    schemaGQL = fs.readFileSync(
-        path.join(__dirname, "../" + RESOURCE_FOLDER, file),
-        'utf8'
-    );
+        schemaGQL = fs.readFileSync(
+            path.join(__dirname, RESOURCE_FOLDER, file),
+            'utf8'
+        );
+    
 
     schemaJSON = schemaParser(schemaGQL);
 

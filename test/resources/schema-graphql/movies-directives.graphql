@@ -1,23 +1,21 @@
-
 type Movie {
   id: ID!
   title: String
-  actors: [Actor] @hasInverse(field: movies)
+  actors: [Actor]  @hasInverse(field: movies)
   studio: Studio!
 }
 
-type Actor {
+type Actor  {
   id: ID!
   name: String
-  movies: [Movie]
+  movies: [Movie] @Join(field: actors)
 }
 
 scalar RGB
-
 
 type Studio {
   id: ID!
   name: String! @selector
   creationYear: Int @selector
-  color : RGB
-} 
+  color: RGB
+}

@@ -1,6 +1,7 @@
 type Movie {
   id: ID
-  title: String
+  title: String 
+  rating: Float @bdtype{double}
   actors: [Actor]
   studio: Studio!
 }
@@ -11,7 +12,9 @@ type Actor {
   movies: [Movie]
 }
 
+
 type Studio {
-  id: ID
   name: String!
+  turnover: Int @bdtype{long}
 }
+

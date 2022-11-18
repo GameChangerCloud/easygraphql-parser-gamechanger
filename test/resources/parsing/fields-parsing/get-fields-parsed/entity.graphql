@@ -1,11 +1,11 @@
 scalar RGB
 
 interface Person {
-    hairColor: RGB
-    friend: Person
+  hairColor: RGB
+  friend: Person
 }
 
-type User implements Person{
-    hairColor: RGB
-    friend: Person
+type User implements Person {
+  hairColor: RGB
+  friend: Person
 }

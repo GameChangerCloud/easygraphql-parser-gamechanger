@@ -1,6 +1,6 @@
 import {Type} from "../models/type";
 import {Scalars} from "../constants/scalar";
-import {isBasicType, isScalar} from "../scalar-managment/manage-scalars";
+import {isBasicScalar} from "../scalar-managment/manage-scalars";
 import {Field} from "../models/field";
 /** Fonctions principales */
 /** DATABASE (tables, init, fill, drop) */
@@ -15,7 +15,7 @@ export const getAllTables = (types: Type[]) => {
         // Fill up the infos on scalar field (int, string, etc.)
         if (currentType.isNotOperation() && currentType.type === "ObjectTypeDefinition") {
             //get scalar field infos
-            tableTemp.push(...getScalarFieldInfo(currentType))
+            tableTemp.push(...getScalarFieldInfo(currentType, typesNameArray))
 
             allTables.push({
                 name: currentType.typeName,
@@ -140,7 +140,7 @@ const pushBasicScalarFieldInfo = (currentType: Type, field: Field, tableTemp: an
     }
 }
 
-function pushCustomScalarFieldInfo(currentType: IType, field: IField, tableTemp: any[]) {
+function pushCustomScalarFieldInfo(currentType: Type, field: Field, tableTemp: any[]) {
     switch (field.type) {
         case Scalars.Date:
             tableTemp.push({
@@ -357,14 +357,14 @@ function pushCustomScalarFieldInfo(currentType: IType, field: IField, tableTemp:
 
 const getScalarFieldInfo = (currentType: Type, typesNameArray: string[]) => {
     let tableTemp: any[] = []
-    currentType.fields.forEach(field => {
-        if (!typesNameArray.includes(field.type) && field["in_model"] && isBasicType(field.type)) {
-            pushBasicScalarFieldInfo(currentType, field, tableTemp)
-        } else if (field.type in Scalars) {
-            pushCustomScalarFieldInfo(currentType, field, tableTemp)
+    currentType.fields.forEach(currentField => {
+        if (!typesNameArray.includes(currentField.type) && currentField["in_model"] && isBasicScalar(currentField.type)) {
+            pushBasicScalarFieldInfo(currentType, currentField, tableTemp)
+        } else if (currentField.type in Scalars) {
+            pushCustomScalarFieldInfo(currentType, currentField, tableTemp)
         } else { // handle types who are traduced into foreignKeys
-            if (field.foreign_key !== null && field.in_model) {
-                let fkInfo = field.foreign_key
+            if (currentField.foreign_key !== null && currentField.in_model) {
+                let fkInfo = currentField.foreign_key
                 tableTemp.push({
                     field: fkInfo.name,
                     fieldType: fkInfo.type,
@@ -374,7 +374,9 @@ const getScalarFieldInfo = (currentType: Type, typesNameArray: string[]) => {
                     gqlType: currentField.type,
                     noNull: currentField.noNull,
                     noNullArrayValues: currentField.noNullArrayValues
-                }
+                })
             }
-        })
+        }
+    })
+    return tableTemp;
 }
