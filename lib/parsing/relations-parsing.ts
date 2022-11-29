@@ -68,20 +68,13 @@ export const getRelations = (types: Type[]) => {
                             let targetedType = types.find(type => type.typeName === relationalField.type);
                             let targetField = targetedType?.fields.find(field => field.type === currentType.typeName);
 
-                            let relationType = currentType.directives.find(directive => directive.name === "Join") ? Relationships.oneToOneJoin : Relationships.oneToOne;
-
-
-                            if (targetField?.noNull && relationalField.noNull) {
-                                throw new OneToOneRelationNotAllowedError()
-                            }
-
-                            for (let relatedFieldName of relatedFieldNames) {
-                                currentType.relationList.push({
-                                    type: relationalField.type,
-                                    relation: relationType,
-                                    relatedFieldName,
-                                });
-                            }
+                            const relationParams = getJoinConfiguration(currentType, types, relationalField);
+                            let relationType = relationParams?.joiningType ? Relationships.oneToOneJoin : Relationships.oneToOne;
+                            currentType.relationList.push({
+                                type: relationalField.type,
+                                relation: relationType,
+                                relatedFieldName: relationParams?.joinedField,
+                            });
    
                             if(relationType) {
                                 relationalField.relation = true;
