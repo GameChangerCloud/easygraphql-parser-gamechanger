@@ -40,4 +40,12 @@ export const directives = {
             console.log('Joining type')
         },
     },
+    sortBy: {
+        name:'SortBy',
+        type: 'perform',
+        runtime: false,
+        resolve: function() {
+            console.log('Pagination sorting argument')
+        }
+    },
 }

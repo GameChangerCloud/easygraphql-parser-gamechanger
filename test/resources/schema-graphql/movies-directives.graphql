@@ -1,13 +1,13 @@
 type Movie {
   id: ID!
-  title: String
+  title: String @SortBy
   actors: [Actor]  @hasInverse(field: movies)
   studio: Studio!
 }
 
 type Actor  {
   id: ID!
-  name: String @unique
+  name: String @Unique
   movies: [Movie] @Join(field: actors)
 }
 
