@@ -11,7 +11,7 @@ type Employe {
 
 type Work {
     id: ID!
-    job: String
+    job: String 
     salary: String
     empl: [Employe]
 }
